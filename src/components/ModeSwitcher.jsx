@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, HardDrive, LogOut, ChevronDown, Check, ShieldCheck } from 'lucide-react'
+import { Cloud, HardDrive, LogOut, ChevronDown, Check, ShieldCheck, Sparkles } from 'lucide-react'
 
 export const ModeSwitcher = ({
   storageMode,
   user,
   onSwitchMode,
   onSignOut,
+  onOpenDataSettings,
   className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -117,9 +118,26 @@ export const ModeSwitcher = ({
                 </button>
               </div>
 
+              {/* Data & Sync Settings Link */}
+              {onOpenDataSettings && (
+                <div className="mt-2 pt-2 border-t border-white/10 light:border-black/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenDataSettings()
+                      setIsOpen(false)
+                    }}
+                    className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] hover:bg-white/5 light:hover:bg-black/5 transition-colors"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-sage-400" />
+                    <span>Data & Cloud Sync</span>
+                  </button>
+                </div>
+              )}
+
               {/* Sign out if in Cloud mode */}
               {isCloud && user && onSignOut && (
-                <div className="mt-2 pt-2 border-t border-white/10 light:border-black/10">
+                <div className="mt-1 pt-1 border-t border-white/10 light:border-black/10">
                   <button
                     type="button"
                     onClick={() => {

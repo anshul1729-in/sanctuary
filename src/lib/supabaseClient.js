@@ -14,12 +14,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+    storageKey: 'sanctuary_auth_session',
   },
 })
 
 // Authentication convenience wrappers
 export const signInWithEmail = async (email, password) => {
   return await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+}
+
+export const signUpWithEmail = async (email, password) => {
+  return await supabase.auth.signUp({
     email,
     password,
   })

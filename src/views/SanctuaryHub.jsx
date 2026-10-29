@@ -4,7 +4,6 @@ import {
   Terminal,
   Cpu,
   Plus,
-  Flame,
   Calendar,
   BookOpen,
   ArrowRight,
@@ -116,32 +115,14 @@ export const SanctuaryHub = ({
           </div>
 
           <div className="flex items-center gap-2.5 self-end sm:self-center">
-            {/* Storage Mode Switcher */}
+            {/* Storage Mode Switcher (Includes Data & Sync Settings in dropdown) */}
             <ModeSwitcher
               storageMode={storageMode}
               user={user}
               onSwitchMode={onSwitchMode}
               onSignOut={onSignOut}
+              onOpenDataSettings={onOpenResetModal}
             />
-
-            {/* Global Streak Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border
-              bg-[#1A1C20] border-white/10 text-[#E6E4DD]
-              light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]">
-              <Flame className="w-3.5 h-3.5 text-amber-warm fill-amber-warm/30" />
-              <span>{globalStreak.currentStreak} day streak</span>
-            </div>
-
-            {/* Manage Sample Data Button */}
-            <button
-              onClick={onOpenResetModal}
-              title="Reset or clear sample logs"
-              className="px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors
-                bg-[#1A1C20] border-white/10 hover:border-sage-400/40 text-[#8E9299] hover:text-[#E6E4DD]
-                light:bg-[#F3EFE6] light:border-black/10 light:hover:border-sage-600/40 light:text-[#6C707E] light:hover:text-[#2B2D42]"
-            >
-              Data Settings
-            </button>
 
             {/* Smooth Theme Toggle */}
             <ThemeToggle />
@@ -236,10 +217,11 @@ export const SanctuaryHub = ({
                       <span className="text-[#E6E4DD] light:text-[#2B2D42] font-sans font-medium">
                         {stats.thisMonthLogs} logs
                       </span>{' '}
-                      this month • Current streak:{' '}
-                      <span className="text-amber-warm font-sans font-medium">
-                        {stats.streak} {stats.streak === 1 ? 'day' : 'days'}
-                      </span>
+                      this month •{' '}
+                      <span className="text-[#E6E4DD] light:text-[#2B2D42] font-sans font-medium">
+                        {stats.activeDays} {stats.activeDays === 1 ? 'day' : 'days'}
+                      </span>{' '}
+                      recorded
                     </div>
 
                     <div className="flex items-center justify-between pt-1">

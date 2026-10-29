@@ -38,9 +38,23 @@ export function App() {
     return localStorage.getItem('sanctuary_storage_mode') || 'cloud'
   })
 
-  // Auth state
-  const [user, setUser] = useState(null)
-  const [isAuthLoading, setIsAuthLoading] = useState(true)
+  // Auth state - initialized from localStorage cache for instant access without re-login flash
+  const [user, setUser] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sanctuary_cached_user')
+      return cached ? JSON.parse(cached) : null
+    } catch {
+      return null
+    }
+  })
+  const [isAuthLoading, setIsAuthLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sanctuary_cached_user')
+      return !cached
+    } catch {
+      return true
+    }
+  })
 
   // Navigation & UI state
   const [view, setView] = useState('hub') // 'hub' | 'section' | 'editor'
@@ -65,14 +79,29 @@ export function App() {
   // 1. Supabase Auth Lifecycle
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user || null)
+      const currentUser = session?.user || null
+      setUser(currentUser)
+      if (currentUser) {
+        localStorage.setItem('sanctuary_cached_user', JSON.stringify(currentUser))
+      } else {
+        localStorage.removeItem('sanctuary_cached_user')
+      }
+      setIsAuthLoading(false)
+    }).catch((err) => {
+      console.warn('Error fetching Supabase session:', err)
       setIsAuthLoading(false)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null)
+      const currentUser = session?.user || null
+      setUser(currentUser)
+      if (currentUser) {
+        localStorage.setItem('sanctuary_cached_user', JSON.stringify(currentUser))
+      } else {
+        localStorage.removeItem('sanctuary_cached_user')
+      }
       setIsAuthLoading(false)
     })
 
@@ -323,7 +352,12 @@ export function App() {
   }
 
   const handleSignOut = async () => {
-    await signOutUser()
+    try {
+      await signOutUser()
+    } catch (err) {
+      console.warn('Sign out error:', err)
+    }
+    localStorage.removeItem('sanctuary_cached_user')
     setUser(null)
   }
 
@@ -344,6 +378,9 @@ export function App() {
     return (
       <UnlockSanctuary
         onLoginSuccess={(authUser) => {
+          if (authUser) {
+            localStorage.setItem('sanctuary_cached_user', JSON.stringify(authUser))
+          }
           setUser(authUser)
         }}
         onSwitchToLocalMode={() => handleSwitchMode('local')}
