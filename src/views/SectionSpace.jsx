@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { ModeSwitcher } from '../components/ModeSwitcher'
 import { JournalStream } from '../components/JournalStream'
 import { ReflectionsAnalytics } from '../components/ReflectionsAnalytics'
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal'
@@ -24,6 +25,10 @@ export const SectionSpace = ({
   onNewEntry,
   onDeleteEntry,
   onToggleFavorite,
+  storageMode = 'cloud',
+  user = null,
+  onSwitchMode,
+  onSignOut,
 }) => {
   const [activeTab, setActiveTab] = useState('stream') // 'stream' | 'analytics'
   const [entryToDelete, setEntryToDelete] = useState(null)
@@ -83,7 +88,15 @@ export const SectionSpace = ({
           </div>
 
           {/* Top Actions */}
-          <div className="flex items-center gap-3 self-end sm:self-center">
+          <div className="flex items-center gap-2.5 self-end sm:self-center">
+            {/* Storage Mode Switcher */}
+            <ModeSwitcher
+              storageMode={storageMode}
+              user={user}
+              onSwitchMode={onSwitchMode}
+              onSignOut={onSignOut}
+            />
+
             {/* + Write Today's Learning Primary Action */}
             <button
               onClick={onNewEntry}

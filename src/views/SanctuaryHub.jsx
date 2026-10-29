@@ -14,6 +14,7 @@ import {
   Compass,
 } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { ModeSwitcher } from '../components/ModeSwitcher'
 import { calculateStreak } from '../lib/storage'
 
 export const SanctuaryHub = ({
@@ -22,6 +23,10 @@ export const SanctuaryHub = ({
   onSelectSection,
   onOpenNewDomain,
   onOpenResetModal,
+  storageMode = 'cloud',
+  user = null,
+  onSwitchMode,
+  onSignOut,
 }) => {
   // Peaceful date formatting
   const today = new Date()
@@ -110,7 +115,15 @@ export const SanctuaryHub = ({
             </h1>
           </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-center">
+          <div className="flex items-center gap-2.5 self-end sm:self-center">
+            {/* Storage Mode Switcher */}
+            <ModeSwitcher
+              storageMode={storageMode}
+              user={user}
+              onSwitchMode={onSwitchMode}
+              onSignOut={onSignOut}
+            />
+
             {/* Global Streak Pill */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border
               bg-[#1A1C20] border-white/10 text-[#E6E4DD]

@@ -28,6 +28,7 @@ export const FreeMindCanvas = ({
   onBack,
   onDeleteEntry,
   onToggleFavorite,
+  storageMode = 'cloud',
 }) => {
   const [title, setTitle] = useState(entry?.title || '')
   const [content, setContent] = useState(entry?.content || '')
@@ -55,7 +56,9 @@ export const FreeMindCanvas = ({
   const typingTimeoutRef = useRef(null)
 
   // Auto-save feedback state
-  const [saveStatus, setSaveStatus] = useState('Saved in sanctuary')
+  const isCloud = storageMode === 'cloud'
+  const defaultSavedText = isCloud ? 'Saved in cloud' : 'Saved in sanctuary'
+  const [saveStatus, setSaveStatus] = useState(defaultSavedText)
   const saveTimeoutRef = useRef(null)
 
   // Delete modal
@@ -122,7 +125,7 @@ export const FreeMindCanvas = ({
 
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
       saveTimeoutRef.current = setTimeout(() => {
-        setSaveStatus('Saved in sanctuary')
+        setSaveStatus(defaultSavedText)
       }, 600)
     },
     [
