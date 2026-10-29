@@ -211,10 +211,20 @@ export const JournalStream = ({
                   </div>
 
                   <div className="flex items-center gap-3">
-                    {/* Complexity Tag Badge if present */}
-                    {entry.complexity?.time && (
-                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-warm/10 text-amber-warm border border-amber-warm/20">
-                        {entry.complexity.time}
+                    {/* Session Time Badge if present */}
+                    {(entry.complexity?.startTime || entry.complexity?.time) && (
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-warm/10 text-amber-warm border border-amber-warm/20 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-amber-warm" />
+                        <span>
+                          {entry.complexity?.startTime && entry.complexity?.endTime
+                            ? `${entry.complexity.startTime} - ${entry.complexity.endTime}`
+                            : entry.complexity?.startTime || entry.complexity?.time}
+                        </span>
+                        {entry.complexity?.duration && (
+                          <span className="text-[10px] opacity-75">
+                            ({entry.complexity.duration})
+                          </span>
+                        )}
                       </span>
                     )}
 

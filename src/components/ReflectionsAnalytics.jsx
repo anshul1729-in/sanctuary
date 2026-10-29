@@ -354,9 +354,14 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                   <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E]">
                     {entry.category} → {entry.subTopic}
                   </span>
-                  {entry.complexity?.time && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-warm/10 text-amber-warm">
-                      {entry.complexity.time}
+                  {(entry.complexity?.startTime || entry.complexity?.time) && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-warm/10 text-amber-warm flex items-center gap-1">
+                      <Clock className="w-2.5 h-2.5 text-amber-warm" />
+                      <span>
+                        {entry.complexity?.startTime && entry.complexity?.endTime
+                          ? `${entry.complexity.startTime} - ${entry.complexity.endTime}`
+                          : entry.complexity?.startTime || entry.complexity?.time}
+                      </span>
                     </span>
                   )}
                 </div>

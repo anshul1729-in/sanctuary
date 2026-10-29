@@ -86,15 +86,55 @@ export const FreeMindCanvas = ({
   const [showSubTopicInput, setShowSubTopicInput] = useState(false)
   const [newSubTopicInput, setNewSubTopicInput] = useState('')
 
-  // Complexity & Takeaway fields visibility
-  const [showComplexity, setShowComplexity] = useState(() => {
-    return isCSDomain || Boolean(entry?.complexity?.time || entry?.complexity?.space)
+  // Session Time & Takeaway fields visibility
+  const [startTime, setStartTime] = useState(
+    entry?.complexity?.startTime || entry?.complexity?.start || ''
+  )
+  const [endTime, setEndTime] = useState(
+    entry?.complexity?.endTime || entry?.complexity?.end || ''
+  )
+
+  const [showSessionTime, setShowSessionTime] = useState(() => {
+    return Boolean(
+      entry?.complexity?.startTime ||
+      entry?.complexity?.endTime ||
+      entry?.complexity?.start ||
+      entry?.complexity?.end
+    )
   })
   const [showTakeaway, setShowTakeaway] = useState(true)
 
-  const [timeComplexity, setTimeComplexity] = useState(entry?.complexity?.time || '')
-  const [spaceComplexity, setSpaceComplexity] = useState(entry?.complexity?.space || '')
   const [takeaway, setTakeaway] = useState(entry?.takeaway || '')
+
+  // Helper to calculate focus duration
+  const calculateDuration = (start, end) => {
+    if (!start || !end) return ''
+    const [sH, sM] = start.split(':').map(Number)
+    const [eH, eM] = end.split(':').map(Number)
+    if (isNaN(sH) || isNaN(sM) || isNaN(eH) || isNaN(eM)) return ''
+    let diffMinutes = eH * 60 + eM - (sH * 60 + sM)
+    if (diffMinutes < 0) diffMinutes += 24 * 60 // crossed midnight
+    const hours = Math.floor(diffMinutes / 60)
+    const mins = diffMinutes % 60
+    if (hours > 0 && mins > 0) return `${hours}h ${mins}m`
+    if (hours > 0) return `${hours}h`
+    return `${mins}m`
+  }
+
+  // Quick helper to stamp current time
+  const setCurrentTime = (field) => {
+    const now = new Date()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const timeStr = `${hours}:${minutes}`
+    if (field === 'start') {
+      setStartTime(timeStr)
+      performSave({ startTime: timeStr })
+    } else {
+      setEndTime(timeStr)
+      performSave({ endTime: timeStr })
+    }
+  }
 
   // Date stamping
   const [dateStr, setDateStr] = useState(() => {
@@ -144,6 +184,18 @@ export const FreeMindCanvas = ({
     (overrides = {}) => {
       setSaveStatus('Saving...')
 
+      const currentStart =
+        overrides.startTime !== undefined ? overrides.startTime : startTime
+      const currentEnd =
+        overrides.endTime !== undefined ? overrides.endTime : endTime
+      const duration = calculateDuration(currentStart, currentEnd)
+      const timeFormatted =
+        currentStart && currentEnd
+          ? `${currentStart} - ${currentEnd}`
+          : currentStart
+          ? `Started ${currentStart}`
+          : ''
+
       const dataToSave = {
         id: entry?.id,
         sectionId: section.id,
@@ -155,9 +207,10 @@ export const FreeMindCanvas = ({
         date: dateStr,
         takeaway: overrides.takeaway !== undefined ? overrides.takeaway : takeaway,
         complexity: {
-          time: overrides.timeComplexity !== undefined ? overrides.timeComplexity : timeComplexity,
-          space:
-            overrides.spaceComplexity !== undefined ? overrides.spaceComplexity : spaceComplexity,
+          startTime: currentStart,
+          endTime: currentEnd,
+          duration,
+          time: timeFormatted,
         },
       }
 
@@ -177,8 +230,8 @@ export const FreeMindCanvas = ({
       subTopic,
       dateStr,
       takeaway,
-      timeComplexity,
-      spaceComplexity,
+      startTime,
+      endTime,
       onSaveEntry,
       defaultSavedText,
     ]
@@ -197,8 +250,8 @@ export const FreeMindCanvas = ({
     subTopic,
     dateStr,
     takeaway,
-    timeComplexity,
-    spaceComplexity,
+    startTime,
+    endTime,
     performSave,
   ])
 
@@ -581,61 +634,87 @@ export const FreeMindCanvas = ({
             </div>
           </div>
 
-          {/* Complexity & Takeaway Row (Collapsible per domain) */}
+          {/* Session Time & Takeaway Row (Collapsible per domain) */}
           <div className="pt-1 flex flex-wrap items-center gap-3 text-xs">
-            {/* Complexity Fields (CS Default, Collapsible / Double-click to hide) */}
+            {/* Session Time (Start Time & End Time, Collapsible / Double-click to hide) */}
             <AnimatePresence>
-              {showComplexity ? (
+              {showSessionTime ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-                  className="flex items-center gap-2.5"
+                  className="flex items-center flex-wrap gap-2.5 p-1.5 px-2.5 rounded-xl border border-white/5 bg-white/5 light:border-black/5 light:bg-black/5"
                 >
-                  <div className="flex items-center gap-1.5 font-mono">
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <Clock className="w-3.5 h-3.5 text-amber-warm" />
                     <span
-                      onDoubleClick={() => setShowComplexity(false)}
-                      title="Double-click label to hide Complexity fields"
-                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none"
+                      onDoubleClick={() => setShowSessionTime(false)}
+                      title="Double-click label to hide Session Time"
+                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none font-medium"
                     >
-                      Time:
+                      Session:
                     </span>
-                    <input
-                      type="text"
-                      placeholder="O(N log N)"
-                      value={timeComplexity}
-                      onChange={(e) => {
-                        setTimeComplexity(e.target.value)
-                        handleTypingActivity()
-                      }}
-                      className="w-24 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
-                    />
                   </div>
 
-                  <div className="flex items-center gap-1.5 font-mono">
-                    <span
-                      onDoubleClick={() => setShowComplexity(false)}
-                      title="Double-click label to hide Complexity fields"
-                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none"
-                    >
-                      Space:
-                    </span>
+                  {/* Start Time */}
+                  <div className="flex items-center gap-1 text-xs font-mono">
+                    <span className="text-[#8E9299] light:text-[#6C707E] text-[11px]">Start:</span>
                     <input
-                      type="text"
-                      placeholder="O(1)"
-                      value={spaceComplexity}
+                      type="time"
+                      value={startTime}
                       onChange={(e) => {
-                        setSpaceComplexity(e.target.value)
+                        setStartTime(e.target.value)
                         handleTypingActivity()
                       }}
-                      className="w-20 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                      className="px-1.5 py-0.5 rounded bg-black/20 light:bg-white/60 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
                     />
+                    {!startTime && (
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTime('start')}
+                        className="text-[10px] text-sage-400 hover:text-sage-300 underline"
+                        title="Set to current time"
+                      >
+                        Now
+                      </button>
+                    )}
                   </div>
+
+                  {/* End Time */}
+                  <div className="flex items-center gap-1 text-xs font-mono">
+                    <span className="text-[#8E9299] light:text-[#6C707E] text-[11px]">End:</span>
+                    <input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => {
+                        setEndTime(e.target.value)
+                        handleTypingActivity()
+                      }}
+                      className="px-1.5 py-0.5 rounded bg-black/20 light:bg-white/60 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                    />
+                    {!endTime && (
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTime('end')}
+                        className="text-[10px] text-sage-400 hover:text-sage-300 underline"
+                        title="Set to current time"
+                      >
+                        Now
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Focus duration badge */}
+                  {calculateDuration(startTime, endTime) && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold">
+                      {calculateDuration(startTime, endTime)} focus
+                    </span>
+                  )}
 
                   <button
                     type="button"
-                    onClick={() => setShowComplexity(false)}
-                    title="Hide Complexity fields"
+                    onClick={() => setShowSessionTime(false)}
+                    title="Hide Session Time (Double-click label to hide)"
                     className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors"
                   >
                     <EyeOff className="w-3 h-3" />
@@ -644,12 +723,12 @@ export const FreeMindCanvas = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setShowComplexity(true)}
-                  title="Show Time/Space Complexity fields"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                  onClick={() => setShowSessionTime(true)}
+                  title="Show Session Time (Start & End Time)"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
                 >
-                  <Plus className="w-3 h-3" />
-                  <span>Complexity</span>
+                  <Clock className="w-3 h-3 text-amber-warm" />
+                  <span>+ Session Time</span>
                 </button>
               )}
             </AnimatePresence>
