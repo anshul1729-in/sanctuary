@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, HardDrive, LogOut, ChevronDown, Check, ShieldCheck, Sparkles } from 'lucide-react'
+import { Cloud, HardDrive, LogOut, ChevronDown, Check, ShieldCheck, Sparkles, Lock } from 'lucide-react'
 
 export const ModeSwitcher = ({
   storageMode,
@@ -19,7 +19,7 @@ export const ModeSwitcher = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono border transition-all duration-200
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono border transition-all duration-200 cursor-pointer
           bg-[#1A1C20] border-white/10 hover:border-sage-400/40 text-[#E6E4DD]
           light:bg-[#F3EFE6] light:border-black/10 light:hover:border-sage-600/40 light:text-[#2B2D42]"
       >
@@ -85,7 +85,7 @@ export const ModeSwitcher = ({
                     onSwitchMode('cloud')
                     setIsOpen(false)
                   }}
-                  className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                  className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition-colors cursor-pointer ${
                     isCloud
                       ? 'bg-sage-400/20 text-sage-300 light:text-sage-800 font-medium'
                       : 'hover:bg-white/5 light:hover:bg-black/5 text-[#8E9299] light:text-[#6C707E]'
@@ -104,7 +104,7 @@ export const ModeSwitcher = ({
                     onSwitchMode('local')
                     setIsOpen(false)
                   }}
-                  className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${
+                  className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition-colors cursor-pointer ${
                     !isCloud
                       ? 'bg-amber-warm/20 text-amber-warm font-medium'
                       : 'hover:bg-white/5 light:hover:bg-black/5 text-[#8E9299] light:text-[#6C707E]'
@@ -127,7 +127,7 @@ export const ModeSwitcher = ({
                       onOpenDataSettings()
                       setIsOpen(false)
                     }}
-                    className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] hover:bg-white/5 light:hover:bg-black/5 transition-colors"
+                    className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] hover:bg-white/5 light:hover:bg-black/5 transition-colors cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-sage-400" />
                     <span>Data & Cloud Sync</span>
@@ -135,7 +135,7 @@ export const ModeSwitcher = ({
                 </div>
               )}
 
-              {/* Sign out if in Cloud mode */}
+              {/* Lock / Sign out if in Cloud mode */}
               {isCloud && user && onSignOut && (
                 <div className="mt-1 pt-1 border-t border-white/10 light:border-black/10">
                   <button
@@ -144,10 +144,10 @@ export const ModeSwitcher = ({
                       onSignOut()
                       setIsOpen(false)
                     }}
-                    className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                   >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Sign Out of Cloud</span>
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Lock / Sign Out</span>
                   </button>
                 </div>
               )}

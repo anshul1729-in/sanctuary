@@ -1,49 +1,52 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, Lock, Sparkles, ArrowRight, HardDrive, KeyRound, AlertCircle, CheckCircle2, UserPlus, LogIn } from 'lucide-react'
-import { signInWithEmail, signUpWithEmail } from '../lib/supabaseClient'
+import { Lock, Eye, EyeOff, KeyRound, ArrowRight, HardDrive, AlertCircle, ShieldCheck } from 'lucide-react'
+import { signInWithEmail } from '../lib/supabaseClient'
 import { ThemeToggle } from '../components/ThemeToggle'
 
+const DEFAULT_OWNER_EMAIL = 'anshul6272@gmail.com'
+
 export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
-  const [authMode, setAuthMode] = useState('login') // 'login' | 'signup'
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [passcode, setPasscode] = useState('')
+  const [email, setEmail] = useState(DEFAULT_OWNER_EMAIL)
+  const [showPasscode, setShowPasscode] = useState(false)
+  const [showEmailInput, setShowEmailInput] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    // Auto-focus passcode on mount
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!email.trim() || !password) return
+    if (!passcode) return
 
     setIsLoading(true)
     setErrorMsg('')
-    setSuccessMsg('')
 
     try {
-      if (authMode === 'login') {
-        const { data, error } = await signInWithEmail(email.trim(), password)
-        if (error) {
-          setErrorMsg(error.message || 'Invalid email or password.')
-        } else if (data?.user) {
-          onLoginSuccess(data.user)
+      const targetEmail = (email && email.trim()) ? email.trim() : DEFAULT_OWNER_EMAIL
+      const { data, error } = await signInWithEmail(targetEmail, passcode)
+
+      if (error) {
+        if (
+          error.message.includes('Invalid login credentials') ||
+          error.message.includes('invalid_grant')
+        ) {
+          setErrorMsg('Incorrect passcode. Please try again.')
+        } else {
+          setErrorMsg(error.message || 'Authentication failed.')
         }
-      } else {
-        // Sign up new user
-        const { data, error } = await signUpWithEmail(email.trim(), password)
-        if (error) {
-          setErrorMsg(error.message || 'Failed to create account.')
-        } else if (data?.user) {
-          if (data?.session) {
-            onLoginSuccess(data.user)
-          } else {
-            setSuccessMsg('Account created! Please check your email or proceed to sign in.')
-            setAuthMode('login')
-          }
-        }
+      } else if (data?.user) {
+        onLoginSuccess(data.user)
       }
     } catch (err) {
-      setErrorMsg('Network error connecting to cloud sanctuary')
+      setErrorMsg('Network error connecting to personal vault')
     } finally {
       setIsLoading(false)
     }
@@ -56,13 +59,13 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-sage-400 light:bg-sage-600 animate-pulse" />
           <span className="text-xs font-mono uppercase tracking-widest text-[#8E9299] light:text-[#6C707E]">
-            Sanctuary Cloud
+            Sanctuary Vault
           </span>
         </div>
         <ThemeToggle />
       </div>
 
-      {/* Main Lock / Auth Card */}
+      {/* Main Personal Lock Screen */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,49 +80,11 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
             <Lock className="w-6 h-6" />
           </div>
           <h2 className="font-serif text-3xl font-medium tracking-tight">
-            {authMode === 'login' ? 'Unlock Sanctuary' : 'Create Your Sanctuary'}
+            Unlock Sanctuary
           </h2>
           <p className="mt-1.5 text-xs text-[#8E9299] light:text-[#6C707E] leading-relaxed">
-            {authMode === 'login'
-              ? 'Enter your credentials to access your private, synchronized learning journal.'
-              : 'Sign up to create your own isolated, encrypted personal knowledge space.'}
+            Personal knowledge vault • Distraction-free focus & conceptual synthesis
           </p>
-        </div>
-
-        {/* Auth Mode Switcher Tabs */}
-        <div className="flex items-center p-1 rounded-xl bg-white/5 light:bg-black/5 mb-5 text-xs">
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode('login')
-              setErrorMsg('')
-              setSuccessMsg('')
-            }}
-            className={`flex-1 py-1.5 rounded-lg font-medium transition-all flex items-center justify-center gap-1.5 ${
-              authMode === 'login'
-                ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold shadow-xs'
-                : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
-            }`}
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>Sign In</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode('signup')
-              setErrorMsg('')
-              setSuccessMsg('')
-            }}
-            className={`flex-1 py-1.5 rounded-lg font-medium transition-all flex items-center justify-center gap-1.5 ${
-              authMode === 'signup'
-                ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold shadow-xs'
-                : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
-            }`}
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Create Account</span>
-          </button>
         </div>
 
         {/* Error Alert */}
@@ -137,67 +102,102 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
           )}
         </AnimatePresence>
 
-        {/* Success Alert */}
-        <AnimatePresence>
-          {successMsg && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-4 p-3 rounded-xl border border-sage-400/30 bg-sage-400/10 text-sage-300 light:text-sage-700 text-xs flex items-center gap-2"
-            >
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-              <span>{successMsg}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Form with clean, non-prefilled fields */}
+        {/* Streamlined Passcode Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E] mb-1.5">
-              Email Address
-            </label>
-            <input
-              type="email"
-              required
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@domain.com"
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm border 
-                bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
-                light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
-            />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E]">
+                Enter Sanctuary Passcode
+              </label>
+              <span className="text-[11px] font-mono text-sage-400/80 light:text-sage-600/80">
+                anshul6272
+              </span>
+            </div>
+
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type={showPasscode ? 'text' : 'password'}
+                required
+                autoFocus
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Enter personal passcode..."
+                className="w-full px-3.5 py-3 pr-11 rounded-xl text-sm font-mono border 
+                  bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
+                  light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasscode(!showPasscode)}
+                tabIndex={-1}
+                aria-label={showPasscode ? 'Hide passcode' : 'Show passcode'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors"
+              >
+                {showPasscode ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E] mb-1.5">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={authMode === 'login' ? '••••••••••••' : 'Minimum 6 characters'}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm border 
-                bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
-                light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
-            />
+          {/* Collapsible Admin Email Override */}
+          <div className="pt-0.5">
+            {!showEmailInput ? (
+              <button
+                type="button"
+                onClick={() => setShowEmailInput(true)}
+                className="text-[11px] text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] underline-offset-4 hover:underline transition-colors"
+              >
+                Use different admin email
+              </button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-1.5 pt-1"
+              >
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E]">
+                    Admin Email Address
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail(DEFAULT_OWNER_EMAIL)
+                      setShowEmailInput(false)
+                    }}
+                    className="text-[10px] text-sage-400 hover:underline"
+                  >
+                    Reset to default
+                  </button>
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@domain.com"
+                  className="w-full px-3 py-2 rounded-xl text-xs border 
+                    bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
+                    light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
+                />
+              </motion.div>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-medium bg-sage-500 hover:bg-sage-600 disabled:opacity-50 text-white shadow-sm transition-all flex items-center justify-center gap-2"
+            disabled={isLoading || !passcode}
+            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-medium bg-sage-500 hover:bg-sage-600 disabled:opacity-50 text-white shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
                 <KeyRound className="w-4 h-4" />
-                <span>{authMode === 'login' ? 'Unlock Sanctuary' : 'Register & Enter'}</span>
+                <span>Unlock Sanctuary</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -207,14 +207,14 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
         {/* Separator / Switch to Local Offline Mode */}
         <div className="mt-6 pt-5 border-t border-white/10 light:border-black/10 text-center">
           <p className="text-xs text-[#8E9299] light:text-[#6C707E] mb-3">
-            Want to write offline without an account?
+            Want to write offline without cloud sync?
           </p>
           <button
             type="button"
             onClick={onSwitchToLocalMode}
             className="w-full py-2.5 px-4 rounded-xl text-xs font-medium border border-white/15 light:border-black/15
               bg-white/5 hover:bg-white/10 light:bg-black/5 light:hover:bg-black/10 text-[#E6E4DD] light:text-[#2B2D42]
-              transition-colors flex items-center justify-center gap-2"
+              transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <HardDrive className="w-3.5 h-3.5 text-amber-warm" />
             <span>Switch to Local Browser Mode (Offline)</span>
@@ -223,8 +223,9 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
       </motion.div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-[#8E9299] light:text-[#6C707E] pt-4">
-        <span>PostgreSQL Cloud Engine • Protected by Row Level Security (RLS)</span>
+      <div className="text-center text-xs text-[#8E9299] light:text-[#6C707E] pt-4 flex items-center justify-center gap-2">
+        <ShieldCheck className="w-3.5 h-3.5 text-sage-400" />
+        <span>Personal Vault • Public Sign-Up Disabled • Supabase RLS Protected</span>
       </div>
     </div>
   )
