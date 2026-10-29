@@ -5,7 +5,7 @@ import { Plus, X, FolderPlus } from 'lucide-react'
 export const NewDomainModal = ({ isOpen, onClose, onAddDomain }) => {
   const [title, setTitle] = useState('')
   const [subtitle, setSubtitle] = useState('')
-  const [categories, setCategories] = useState('Foundations, Projects, Core Concepts')
+  const [categories, setCategories] = useState('')
 
   if (!isOpen) return null
 
@@ -25,7 +25,7 @@ export const NewDomainModal = ({ isOpen, onClose, onAddDomain }) => {
       description: 'A dedicated sanctuary for recording structured progress and reflections.',
       icon: 'Folder',
       accentColor: '#84A59D',
-      categories: categoryList.length > 0 ? categoryList : ['General', 'Notes'],
+      categories: categoryList.length > 0 ? categoryList : ['General'],
       subTopicsMap: {}
     }
 
@@ -105,11 +105,11 @@ export const NewDomainModal = ({ isOpen, onClose, onAddDomain }) => {
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E] mb-1.5">
-                Initial Categories (comma separated)
+                Initial Categories (comma separated, optional)
               </label>
               <input
                 type="text"
-                placeholder="e.g. Scalability, Caching, Sharding, Consensus"
+                placeholder="e.g. Organic, Kinetics, Spectroscopy"
                 value={categories}
                 onChange={(e) => setCategories(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl text-sm border 

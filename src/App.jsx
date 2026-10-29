@@ -271,6 +271,24 @@ export function App() {
     }
   }
 
+  // Unified Update Section (domain tags / categories / metadata)
+  const handleUpdateSection = async (updatedSection) => {
+    setSections((prev) =>
+      prev.map((s) => (s.id === updatedSection.id ? updatedSection : s))
+    )
+
+    if (storageMode === 'cloud' && user) {
+      try {
+        await saveCloudSection(updatedSection, user.id)
+      } catch (err) {
+        console.error('Failed to update cloud section:', err)
+      }
+    } else {
+      const updatedList = saveLocalSection(updatedSection)
+      setSections(updatedList)
+    }
+  }
+
   // Reset / Clear Data
   const handleResetSeedData = async () => {
     if (storageMode === 'cloud' && user) {
@@ -374,6 +392,7 @@ export function App() {
             entry={activeEntry}
             section={activeSection}
             onSaveEntry={handleSaveEntry}
+            onUpdateSection={handleUpdateSection}
             onBack={handleBackToSection}
             onDeleteEntry={handleDeleteEntry}
             onToggleFavorite={handleToggleFavorite}

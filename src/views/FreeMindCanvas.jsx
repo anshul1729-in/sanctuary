@@ -16,6 +16,8 @@ import {
   HelpCircle,
   Hash,
   ChevronDown,
+  X,
+  EyeOff,
 } from 'lucide-react'
 import { TipTapEditor } from '../components/TipTapEditor'
 import { ThemeToggle } from '../components/ThemeToggle'
@@ -25,20 +27,71 @@ export const FreeMindCanvas = ({
   entry,
   section,
   onSaveEntry,
+  onUpdateSection,
   onBack,
   onDeleteEntry,
   onToggleFavorite,
   storageMode = 'cloud',
 }) => {
+  // Domain detection
+  const isCSDomain =
+    section?.id === 'cs' ||
+    Boolean(section?.title?.toLowerCase().includes('computer science'))
+
+  // Domain categories
+  const domainCategories =
+    Array.isArray(section?.categories) && section.categories.length > 0
+      ? section.categories
+      : isCSDomain
+      ? ['DSA', 'Systems', 'Networking', 'Operating Systems', 'Databases']
+      : ['General']
+
   const [title, setTitle] = useState(entry?.title || '')
   const [content, setContent] = useState(entry?.content || '')
-  const [category, setCategory] = useState(entry?.category || 'DSA')
-  const [subTopic, setSubTopic] = useState(entry?.subTopic || 'Graphs')
-  const [tags, setTags] = useState(entry?.tags || [])
-  const [newTagInput, setNewTagInput] = useState('')
-  const [showTagInput, setShowTagInput] = useState(false)
 
-  // Complexity notes
+  // Active Category state
+  const [category, setCategory] = useState(() => {
+    if (entry?.category && domainCategories.includes(entry.category)) {
+      return entry.category
+    }
+    return domainCategories[0] || (isCSDomain ? 'DSA' : 'General')
+  })
+
+  // Domain subtopics map & available subtopics for active category
+  const domainSubTopicsMap = section?.subTopicsMap || {}
+  const availableSubTopics =
+    domainSubTopicsMap[category] ||
+    (isCSDomain && category === 'DSA'
+      ? [
+          'Graphs',
+          'Dynamic Programming',
+          'Trees',
+          'Sliding Window',
+          'Two Pointers',
+          'Recursion',
+          'Binary Search',
+          'Heaps',
+        ]
+      : [])
+
+  // Active Sub-Topic state
+  const [subTopic, setSubTopic] = useState(() => {
+    if (entry?.subTopic) return entry.subTopic
+    return availableSubTopics[0] || ''
+  })
+
+  // Inline custom category & tag inputs
+  const [showCategoryInput, setShowCategoryInput] = useState(false)
+  const [newCategoryInput, setNewCategoryInput] = useState('')
+  const [showSubTopicInput, setShowSubTopicInput] = useState(false)
+  const [newSubTopicInput, setNewSubTopicInput] = useState('')
+
+  // Complexity & Takeaway fields visibility
+  const [showComplexity, setShowComplexity] = useState(() => {
+    return isCSDomain || Boolean(entry?.complexity?.time || entry?.complexity?.space)
+  })
+  const [showTakeaway, setShowTakeaway] = useState(true)
+
   const [timeComplexity, setTimeComplexity] = useState(entry?.complexity?.time || '')
   const [spaceComplexity, setSpaceComplexity] = useState(entry?.complexity?.space || '')
   const [takeaway, setTakeaway] = useState(entry?.takeaway || '')
@@ -63,19 +116,6 @@ export const FreeMindCanvas = ({
 
   // Delete modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-  // Suggested sub-topics based on current category
-  const availableSubTopics =
-    section?.subTopicsMap?.[category] || [
-      'Graphs',
-      'Dynamic Programming',
-      'Trees',
-      'Sliding Window',
-      'Two Pointers',
-      'Recursion',
-      'Binary Search',
-      'Heaps',
-    ]
 
   // Compute reading time
   const readingTime = (() => {
@@ -111,7 +151,7 @@ export const FreeMindCanvas = ({
         content: overrides.content !== undefined ? overrides.content : content,
         category: overrides.category !== undefined ? overrides.category : category,
         subTopic: overrides.subTopic !== undefined ? overrides.subTopic : subTopic,
-        tags: overrides.tags !== undefined ? overrides.tags : tags,
+        tags: overrides.tags !== undefined ? overrides.tags : [subTopic].filter(Boolean),
         date: dateStr,
         takeaway: overrides.takeaway !== undefined ? overrides.takeaway : takeaway,
         complexity: {
@@ -135,12 +175,12 @@ export const FreeMindCanvas = ({
       content,
       category,
       subTopic,
-      tags,
       dateStr,
       takeaway,
       timeComplexity,
       spaceComplexity,
       onSaveEntry,
+      defaultSavedText,
     ]
   )
 
@@ -155,7 +195,6 @@ export const FreeMindCanvas = ({
     content,
     category,
     subTopic,
-    tags,
     dateStr,
     takeaway,
     timeComplexity,
@@ -163,33 +202,110 @@ export const FreeMindCanvas = ({
     performSave,
   ])
 
-  // Add custom tag
-  const handleAddTag = (e) => {
+  // Category addition & removal
+  const handleAddCategory = (e) => {
     e.preventDefault()
-    const trimmed = newTagInput.trim().replace(/^#/, '')
-    if (trimmed && !tags.includes(trimmed)) {
-      const nextTags = [...tags, trimmed]
-      setTags(nextTags)
-      performSave({ tags: nextTags })
-      setNewTagInput('')
-      setShowTagInput(false)
+    const trimmed = newCategoryInput.trim()
+    if (!trimmed) return
+
+    if (!domainCategories.includes(trimmed)) {
+      const nextCategories = [...domainCategories, trimmed]
+      const updatedSection = {
+        ...section,
+        categories: nextCategories,
+      }
+      if (onUpdateSection) {
+        onUpdateSection(updatedSection)
+      }
+      setCategory(trimmed)
+      setSubTopic('')
+      performSave({ category: trimmed, subTopic: '' })
+    }
+    setNewCategoryInput('')
+    setShowCategoryInput(false)
+  }
+
+  const handleRemoveCategory = (catToRemove, e) => {
+    e.stopPropagation()
+    const nextCategories = domainCategories.filter((c) => c !== catToRemove)
+    const finalCategories = nextCategories.length > 0 ? nextCategories : ['General']
+
+    const nextSubTopicsMap = { ...(section?.subTopicsMap || {}) }
+    delete nextSubTopicsMap[catToRemove]
+
+    const updatedSection = {
+      ...section,
+      categories: finalCategories,
+      subTopicsMap: nextSubTopicsMap,
+    }
+    if (onUpdateSection) {
+      onUpdateSection(updatedSection)
+    }
+
+    if (category === catToRemove) {
+      const fallbackCat = finalCategories[0]
+      setCategory(fallbackCat)
+      const fallbackSubs = nextSubTopicsMap[fallbackCat] || []
+      const fallbackSub = fallbackSubs[0] || ''
+      setSubTopic(fallbackSub)
+      performSave({ category: fallbackCat, subTopic: fallbackSub })
     }
   }
 
-  const removeTag = (tagToRemove) => {
-    const nextTags = tags.filter((t) => t !== tagToRemove)
-    setTags(nextTags)
-    performSave({ tags: nextTags })
+  // Sub-Topic addition & removal
+  const handleAddSubTopic = (e) => {
+    e.preventDefault()
+    const trimmed = newSubTopicInput.trim().replace(/^#/, '')
+    if (!trimmed) return
+
+    if (!availableSubTopics.includes(trimmed)) {
+      const nextSubs = [...availableSubTopics, trimmed]
+      const nextSubTopicsMap = {
+        ...(section?.subTopicsMap || {}),
+        [category]: nextSubs,
+      }
+      const updatedSection = {
+        ...section,
+        subTopicsMap: nextSubTopicsMap,
+      }
+      if (onUpdateSection) {
+        onUpdateSection(updatedSection)
+      }
+      setSubTopic(trimmed)
+      performSave({ subTopic: trimmed })
+    }
+    setNewSubTopicInput('')
+    setShowSubTopicInput(false)
+  }
+
+  const handleRemoveSubTopic = (stToRemove, e) => {
+    e.stopPropagation()
+    const nextSubs = availableSubTopics.filter((s) => s !== stToRemove)
+    const nextSubTopicsMap = {
+      ...(section?.subTopicsMap || {}),
+      [category]: nextSubs,
+    }
+    const updatedSection = {
+      ...section,
+      subTopicsMap: nextSubTopicsMap,
+    }
+    if (onUpdateSection) {
+      onUpdateSection(updatedSection)
+    }
+
+    if (subTopic === stToRemove) {
+      const fallbackSub = nextSubs[0] || ''
+      setSubTopic(fallbackSub)
+      performSave({ subTopic: fallbackSub })
+    }
   }
 
   // Calculate UI opacity for Zen Mode & Auto-dimming
-  // Dim to opacity-10 if isZenMode OR (isTyping and not hovered near top)
   const shouldDimControls = (isZenMode || isTyping) && !isHeaderHovered
 
   return (
     <div
       onMouseMove={() => {
-        // If mouse moves, momentarily soften dimming
         if (isTyping) {
           if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
           typingTimeoutRef.current = setTimeout(() => {
@@ -316,124 +432,275 @@ export const FreeMindCanvas = ({
               />
             </div>
 
-            {/* Primary Category Selector */}
-            <div className="flex items-center gap-1.5">
+            {/* Primary Category Selector with Double-Click to Remove */}
+            <div className="flex items-center flex-wrap gap-1.5">
               <span className="text-[#8E9299] light:text-[#6C707E]">Category:</span>
-              <div className="flex items-center gap-1">
-                {(section?.categories || ['DSA', 'Systems']).map((cat) => (
+              <div className="flex items-center flex-wrap gap-1">
+                <AnimatePresence>
+                  {domainCategories.map((cat) => {
+                    const isSelected = category === cat
+                    return (
+                      <motion.button
+                        key={cat}
+                        layout
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.7, transition: { duration: 0.15 } }}
+                        onClick={() => {
+                          setCategory(cat)
+                          const nextSubs = (section?.subTopicsMap?.[cat]) || []
+                          setSubTopic(nextSubs[0] || '')
+                        }}
+                        onDoubleClick={(e) => handleRemoveCategory(cat, e)}
+                        title="Click to select • Double-click to remove from domain"
+                        className={`group relative px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                          isSelected
+                            ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30 font-semibold'
+                            : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                        }`}
+                      >
+                        <span>{cat}</span>
+                      </motion.button>
+                    )
+                  })}
+                </AnimatePresence>
+
+                {/* Inline + Category Toggle */}
+                {!showCategoryInput ? (
                   <button
-                    key={cat}
-                    onClick={() => {
-                      setCategory(cat)
-                      const firstSub = section?.subTopicsMap?.[cat]?.[0] || 'General'
-                      setSubTopic(firstSub)
-                    }}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                      category === cat
-                        ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30 font-semibold'
-                        : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
-                    }`}
+                    type="button"
+                    onClick={() => setShowCategoryInput(true)}
+                    title="Add custom category to this domain"
+                    className="px-2 py-0.5 rounded-md text-[11px] text-sage-400 light:text-sage-600 hover:bg-sage-400/10 transition-colors flex items-center gap-0.5"
                   >
-                    {cat}
+                    <Plus className="w-3 h-3" />
+                    <span>Category</span>
                   </button>
-                ))}
+                ) : (
+                  <form onSubmit={handleAddCategory} className="inline-flex items-center gap-1">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="New category..."
+                      value={newCategoryInput}
+                      onChange={(e) => setNewCategoryInput(e.target.value)}
+                      className="w-28 px-2 py-0.5 text-xs rounded bg-[#121316] border border-sage-400/50 text-[#E6E4DD] focus:outline-none light:bg-[#FBF9F5] light:text-[#2B2D42]"
+                    />
+                    <button
+                      type="submit"
+                      className="px-1.5 py-0.5 text-[11px] rounded bg-sage-500 text-white hover:bg-sage-600"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowCategoryInput(false)}
+                      className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD]"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Sub-Topic Tag Pills */}
-          <div className="space-y-2">
+          {/* Sub-Topic Tag Pills with Double-Click to Remove */}
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs text-[#8E9299] light:text-[#6C707E]">
               <span>Sub-Topic Tag:</span>
-              <button
-                onClick={() => setShowTagInput(!showTagInput)}
-                className="text-[11px] text-sage-400 light:text-sage-600 hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3 h-3" /> Custom Tag
-              </button>
+              {!showSubTopicInput && (
+                <button
+                  type="button"
+                  onClick={() => setShowSubTopicInput(true)}
+                  className="text-[11px] text-sage-400 light:text-sage-600 hover:underline flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> Custom Tag
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5">
-              {availableSubTopics.map((st) => (
-                <button
-                  key={st}
-                  onClick={() => setSubTopic(st)}
-                  className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                    subTopic === st
-                      ? 'bg-sage-400 text-[#121316] font-semibold shadow-xs'
-                      : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
-                  }`}
-                >
-                  {st}
-                </button>
-              ))}
-            </div>
+              <AnimatePresence>
+                {availableSubTopics.map((st) => {
+                  const isSelected = subTopic === st
+                  return (
+                    <motion.button
+                      key={st}
+                      layout
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.7, transition: { duration: 0.15 } }}
+                      onClick={() => setSubTopic(st)}
+                      onDoubleClick={(e) => handleRemoveSubTopic(st, e)}
+                      title="Click to select • Double-click to remove from domain"
+                      className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                        isSelected
+                          ? 'bg-sage-400 text-[#121316] font-semibold shadow-xs'
+                          : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                      }`}
+                    >
+                      <span>{st}</span>
+                    </motion.button>
+                  )
+                })}
+              </AnimatePresence>
 
-            {/* Custom Tag Input drawer */}
-            {showTagInput && (
-              <form onSubmit={handleAddTag} className="flex items-center gap-2 pt-1">
-                <input
-                  type="text"
-                  placeholder="Add custom topic (e.g. Disjoint Set Union)"
-                  value={newTagInput}
-                  onChange={(e) => setNewTagInput(e.target.value)}
-                  className="px-2.5 py-1 text-xs rounded-lg border bg-[#1A1C20] border-white/10 text-[#E6E4DD] focus:outline-none focus:border-sage-400 light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]"
-                />
-                <button
-                  type="submit"
-                  className="px-2.5 py-1 text-xs rounded-lg bg-sage-500 text-white hover:bg-sage-600 transition-colors"
-                >
-                  Add
-                </button>
-              </form>
-            )}
+              {availableSubTopics.length === 0 && !showSubTopicInput && (
+                <span className="text-[11px] text-[#8E9299]/70 italic">
+                  No sub-topics yet for {category}. Click "+ Custom Tag" to add one.
+                </span>
+              )}
+
+              {/* Inline Custom Sub-Topic Tag Input */}
+              {showSubTopicInput && (
+                <form onSubmit={handleAddSubTopic} className="inline-flex items-center gap-1.5">
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="e.g. Synthesis, Kinetics"
+                    value={newSubTopicInput}
+                    onChange={(e) => setNewSubTopicInput(e.target.value)}
+                    className="px-2.5 py-1 text-xs rounded-lg border bg-[#1A1C20] border-sage-400/50 text-[#E6E4DD] focus:outline-none light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]"
+                  />
+                  <button
+                    type="submit"
+                    className="px-2 py-1 text-xs rounded-lg bg-sage-500 text-white hover:bg-sage-600 transition-colors"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSubTopicInput(false)}
+                    className="p-1 text-[#8E9299] hover:text-[#E6E4DD]"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
 
-          {/* Optional Complexity and Takeaway Drawer (Collapsible) */}
-          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs">
-            <div className="flex items-center gap-1.5 font-mono">
-              <span className="text-[#8E9299] light:text-[#6C707E]">Time:</span>
-              <input
-                type="text"
-                placeholder="O(N log N)"
-                value={timeComplexity}
-                onChange={(e) => {
-                  setTimeComplexity(e.target.value)
-                  handleTypingActivity()
-                }}
-                className="w-24 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
-              />
-            </div>
+          {/* Complexity & Takeaway Row (Collapsible per domain) */}
+          <div className="pt-1 flex flex-wrap items-center gap-3 text-xs">
+            {/* Complexity Fields (CS Default, Collapsible / Double-click to hide) */}
+            <AnimatePresence>
+              {showComplexity ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                  className="flex items-center gap-2.5"
+                >
+                  <div className="flex items-center gap-1.5 font-mono">
+                    <span
+                      onDoubleClick={() => setShowComplexity(false)}
+                      title="Double-click label to hide Complexity fields"
+                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none"
+                    >
+                      Time:
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="O(N log N)"
+                      value={timeComplexity}
+                      onChange={(e) => {
+                        setTimeComplexity(e.target.value)
+                        handleTypingActivity()
+                      }}
+                      className="w-24 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                    />
+                  </div>
 
-            <div className="flex items-center gap-1.5 font-mono">
-              <span className="text-[#8E9299] light:text-[#6C707E]">Space:</span>
-              <input
-                type="text"
-                placeholder="O(1)"
-                value={spaceComplexity}
-                onChange={(e) => {
-                  setSpaceComplexity(e.target.value)
-                  handleTypingActivity()
-                }}
-                className="w-20 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
-              />
-            </div>
+                  <div className="flex items-center gap-1.5 font-mono">
+                    <span
+                      onDoubleClick={() => setShowComplexity(false)}
+                      title="Double-click label to hide Complexity fields"
+                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none"
+                    >
+                      Space:
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="O(1)"
+                      value={spaceComplexity}
+                      onChange={(e) => {
+                        setSpaceComplexity(e.target.value)
+                        handleTypingActivity()
+                      }}
+                      className="w-20 px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                    />
+                  </div>
 
-            <div className="flex-1 min-w-[200px] flex items-center gap-1.5">
-              <span className="text-[#8E9299] light:text-[#6C707E] font-serif italic whitespace-nowrap">
-                Aha! Takeaway:
-              </span>
-              <input
-                type="text"
-                placeholder="Key insight or core invariant..."
-                value={takeaway}
-                onChange={(e) => {
-                  setTakeaway(e.target.value)
-                  handleTypingActivity()
-                }}
-                className="w-full px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs italic font-serif focus:outline-none focus:border-sage-400"
-              />
-            </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowComplexity(false)}
+                    title="Hide Complexity fields"
+                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors"
+                  >
+                    <EyeOff className="w-3 h-3" />
+                  </button>
+                </motion.div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowComplexity(true)}
+                  title="Show Time/Space Complexity fields"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Complexity</span>
+                </button>
+              )}
+            </AnimatePresence>
+
+            {/* Aha! Takeaway Input (Collapsible / Double-click to hide) */}
+            <AnimatePresence>
+              {showTakeaway ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                  className="flex-1 min-w-[220px] flex items-center gap-1.5"
+                >
+                  <span
+                    onDoubleClick={() => setShowTakeaway(false)}
+                    title="Double-click label to hide Takeaway field"
+                    className="text-[#8E9299] light:text-[#6C707E] font-serif italic whitespace-nowrap cursor-pointer hover:text-sage-400 transition-colors select-none"
+                  >
+                    Aha! Takeaway:
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Key insight or core invariant..."
+                    value={takeaway}
+                    onChange={(e) => {
+                      setTakeaway(e.target.value)
+                      handleTypingActivity()
+                    }}
+                    className="w-full px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs italic font-serif focus:outline-none focus:border-sage-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowTakeaway(false)}
+                    title="Hide Takeaway field"
+                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors"
+                  >
+                    <EyeOff className="w-3 h-3" />
+                  </button>
+                </motion.div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowTakeaway(true)}
+                  title="Show Aha! Takeaway field"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-serif italic text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Takeaway</span>
+                </button>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 

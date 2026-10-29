@@ -2,7 +2,7 @@ name: Deploy Sanctuary to GitHub Pages
 
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'supabase-cloud']
   workflow_dispatch:
 
 permissions:
