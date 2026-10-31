@@ -458,8 +458,8 @@ export function App() {
   // If loading auth initial state
   if (isAuthLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#121316] text-[#E6E4DD]">
-        <div className="flex items-center gap-3">
+      <div className="min-h-screen flex items-center justify-center glass-ambient-bg text-[#F3F4F6]">
+        <div className="flex items-center gap-3 p-4 px-6 rounded-2xl glass-card">
           <span className="w-2.5 h-2.5 rounded-full bg-sage-400 animate-pulse" />
           <span className="font-serif text-lg text-sage-300">Sanctuary</span>
         </div>
@@ -483,7 +483,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen selection:bg-sage-400/25 selection:text-sage-300">
+    <div className="min-h-screen glass-ambient-bg text-[#F3F4F6] selection:bg-sage-400/25 selection:text-sage-300">
       <AnimatePresence mode="wait">
         {view === 'hub' && (
           <SanctuaryHub

@@ -75,86 +75,86 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
 
   return (
     <div className="space-y-10">
-      {/* 1. Tranquil Consistency Trophy Bar */}
+      {/* 1. Tranquil Consistency Trophy Bar on Glass Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 sm:p-5 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8E9299] light:text-[#6C707E] mb-1">
+        <div className="p-4 sm:p-5 rounded-2xl glass-card">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF] light:text-[#6C707E] mb-1">
             <Flame className="w-3.5 h-3.5 text-amber-warm" />
             <span>Current Streak</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             {streak.currentStreak}{' '}
-            <span className="text-xs font-sans font-normal text-[#8E9299] light:text-[#6C707E]">
+            <span className="text-xs font-sans font-normal text-[#9CA3AF] light:text-[#6C707E]">
               days
             </span>
           </div>
-          <p className="text-[11px] text-[#8E9299] light:text-[#6C707E] mt-1">
+          <p className="text-[11px] text-[#9CA3AF] light:text-[#6C707E] mt-1">
             Best streak: {streak.longestStreak} days
           </p>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8E9299] light:text-[#6C707E] mb-1">
+        <div className="p-4 sm:p-5 rounded-2xl glass-card">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF] light:text-[#6C707E] mb-1">
             <Award className="w-3.5 h-3.5 text-sage-400 light:text-sage-600" />
             <span>Reflections</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             {totalStats.totalReflections}{' '}
-            <span className="text-xs font-sans font-normal text-[#8E9299] light:text-[#6C707E]">
+            <span className="text-xs font-sans font-normal text-[#9CA3AF] light:text-[#6C707E]">
               entries
             </span>
           </div>
-          <p className="text-[11px] text-[#8E9299] light:text-[#6C707E] mt-1">
+          <p className="text-[11px] text-[#9CA3AF] light:text-[#6C707E] mt-1">
             {streak.activeDaysCount} active writing days
           </p>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8E9299] light:text-[#6C707E] mb-1">
+        <div className="p-4 sm:p-5 rounded-2xl glass-card">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF] light:text-[#6C707E] mb-1">
             <Clock className="w-3.5 h-3.5 text-terracotta-soft" />
             <span>Deep Time</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             ~{totalStats.totalHours}{' '}
-            <span className="text-xs font-sans font-normal text-[#8E9299] light:text-[#6C707E]">
+            <span className="text-xs font-sans font-normal text-[#9CA3AF] light:text-[#6C707E]">
               hours
             </span>
           </div>
-          <p className="text-[11px] text-[#8E9299] light:text-[#6C707E] mt-1">
+          <p className="text-[11px] text-[#9CA3AF] light:text-[#6C707E] mt-1">
             Unbroken focus time
           </p>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8E9299] light:text-[#6C707E] mb-1">
+        <div className="p-4 sm:p-5 rounded-2xl glass-card">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF] light:text-[#6C707E] mb-1">
             <Sparkles className="w-3.5 h-3.5 text-sage-400 light:text-sage-600" />
             <span>Mastery Rhythm</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+          <div className="text-2xl sm:text-3xl font-serif font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             {Object.keys(categoryBreakdown.subCounts['DSA'] || {}).length}{' '}
-            <span className="text-xs font-sans font-normal text-[#8E9299] light:text-[#6C707E]">
+            <span className="text-xs font-sans font-normal text-[#9CA3AF] light:text-[#6C707E]">
               sub-topics
             </span>
           </div>
-          <p className="text-[11px] text-[#8E9299] light:text-[#6C707E] mt-1">
+          <p className="text-[11px] text-[#9CA3AF] light:text-[#6C707E] mt-1">
             Explored & synthesized
           </p>
         </div>
       </div>
 
       {/* 2. Consistency Rhythm (Activity Heatmap) */}
-      <div className="p-6 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-soft-dark light:shadow-soft-light">
+      <div className="p-6 rounded-2xl glass-card">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
           <div>
-            <h3 className="font-serif text-xl font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+            <h3 className="font-serif text-xl font-medium text-[#F3F4F6] light:text-[#2B2D42]">
               Consistency Rhythm
             </h3>
-            <p className="text-xs text-[#8E9299] light:text-[#6C707E]">
+            <p className="text-xs text-[#9CA3AF] light:text-[#6C707E]">
               16-week tranquil habit trail. Every colored stone marks a day of active conceptual reflection.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8E9299] light:text-[#6C707E]">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF] light:text-[#6C707E]">
             <span>Less</span>
             <div className="flex items-center gap-1">
               <span className="w-3 h-3 rounded-sm bg-white/5 light:bg-black/5" />
@@ -196,12 +196,12 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
       </div>
 
       {/* 3. Topic Footprint (Hierarchical Breakdown) */}
-      <div className="p-6 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-soft-dark light:shadow-soft-light">
+      <div className="p-6 rounded-2xl glass-card">
         <div className="mb-6">
-          <h3 className="font-serif text-xl font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+          <h3 className="font-serif text-xl font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             Topic Footprint
           </h3>
-          <p className="text-xs text-[#8E9299] light:text-[#6C707E]">
+          <p className="text-xs text-[#9CA3AF] light:text-[#6C707E]">
             Hierarchical distribution of learning energy. Click any core category to inspect the exact sub-topics mastered.
           </p>
         </div>
@@ -216,7 +216,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
             return (
               <div
                 key={category}
-                className="p-4 rounded-xl border border-white/5 light:border-black/5 bg-[#121316]/50 light:bg-[#FBF9F5]/70 transition-all"
+                className="p-4 rounded-xl border border-white/5 light:border-black/5 bg-white/[0.03] light:bg-black/[0.03] transition-all"
               >
                 {/* Header Row */}
                 <div
@@ -224,7 +224,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                   className="flex items-center justify-between cursor-pointer group"
                 >
                   <div className="flex items-center gap-3">
-                    <button className="text-[#8E9299] group-hover:text-sage-400 transition-colors">
+                    <button className="text-[#9CA3AF] group-hover:text-sage-400 transition-colors cursor-pointer">
                       {isExpanded ? (
                         <ChevronDown className="w-4 h-4" />
                       ) : (
@@ -232,17 +232,17 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                       )}
                     </button>
                     <div>
-                      <span className="font-serif text-lg font-medium text-[#E6E4DD] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
+                      <span className="font-serif text-lg font-medium text-[#F3F4F6] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
                         {category}
                       </span>
-                      <span className="ml-2 text-xs text-[#8E9299] light:text-[#6C707E]">
+                      <span className="ml-2 text-xs text-[#9CA3AF] light:text-[#6C707E]">
                         ({count} {count === 1 ? 'log' : 'logs'})
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-[#8E9299] light:text-[#6C707E]">
+                    <span className="text-xs font-mono text-[#9CA3AF] light:text-[#6C707E]">
                       {percentage}% of focus
                     </span>
                   </div>
@@ -259,7 +259,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                       className="mt-4 pt-4 border-t border-white/5 light:border-black/5 space-y-3"
                     >
                       {Object.keys(subtopics).length === 0 ? (
-                        <p className="text-xs text-[#8E9299] light:text-[#6C707E] italic">
+                        <p className="text-xs text-[#9CA3AF] light:text-[#6C707E] italic">
                           No sub-topics logged yet under {category}.
                         </p>
                       ) : (
@@ -268,10 +268,10 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                           return (
                             <div key={sub} className="space-y-1">
                               <div className="flex items-center justify-between text-xs">
-                                <span className="font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+                                <span className="font-medium text-[#F3F4F6] light:text-[#2B2D42]">
                                   {sub}
                                 </span>
-                                <span className="font-mono text-[#8E9299] light:text-[#6C707E]">
+                                <span className="font-mono text-[#9CA3AF] light:text-[#6C707E]">
                                   {subCount} {subCount === 1 ? 'day' : 'days'} ({subPercentage}%)
                                 </span>
                               </div>
@@ -297,13 +297,13 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
       </div>
 
       {/* 4. The Milestone River (Topic Filter Timeline) */}
-      <div className="p-6 rounded-2xl border bg-[#1A1C20] border-white/5 light:bg-[#F3EFE6] light:border-black/5 shadow-soft-dark light:shadow-soft-light">
+      <div className="p-6 rounded-2xl glass-card">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
           <div>
-            <h3 className="font-serif text-xl font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+            <h3 className="font-serif text-xl font-medium text-[#F3F4F6] light:text-[#2B2D42]">
               The Milestone River
             </h3>
-            <p className="text-xs text-[#8E9299] light:text-[#6C707E]">
+            <p className="text-xs text-[#9CA3AF] light:text-[#6C707E]">
               Key aha moments and takeaways distilled chronologically. Filter by topic to review your progression.
             </p>
           </div>
@@ -314,10 +314,10 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
               <button
                 key={topic}
                 onClick={() => setSelectedTopicFilter(topic)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                   selectedTopicFilter === topic
                     ? 'bg-sage-400 text-[#121316] font-semibold'
-                    : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                    : 'bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E] hover:text-[#F3F4F6] light:hover:text-[#2B2D42]'
                 }`}
               >
                 {topic}
@@ -329,7 +329,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
         {/* Vertical Timeline River */}
         <div className="relative pl-6 sm:pl-8 border-l border-white/10 light:border-black/10 space-y-8 my-4">
           {milestoneEntries.length === 0 ? (
-            <p className="text-xs text-[#8E9299] light:text-[#6C707E] italic">
+            <p className="text-xs text-[#9CA3AF] light:text-[#6C707E] italic">
               No milestones found for topic "{selectedTopicFilter}".
             </p>
           ) : (
@@ -343,15 +343,15 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                 onClick={() => onOpenEntry(entry.id)}
               >
                 {/* Timeline Node Dot */}
-                <span className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#121316] light:bg-[#FBF9F5] border-2 border-sage-400 light:border-sage-600 group-hover:scale-125 group-hover:bg-sage-400 transition-all duration-200" />
+                <span className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#000000] light:bg-[#FBF9F5] border-2 border-sage-400 light:border-sage-600 group-hover:scale-125 group-hover:bg-sage-400 transition-all duration-200" />
 
                 {/* Date & Tags */}
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-mono text-sage-400 light:text-sage-600">
                     {entry.date}
                   </span>
-                  <span className="text-xs text-[#8E9299]/40">•</span>
-                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E]">
+                  <span className="text-xs text-[#9CA3AF]/40">•</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E]">
                     {entry.category} → {entry.subTopic}
                   </span>
                   {(entry.complexity?.startTime || entry.complexity?.time) && (
@@ -367,7 +367,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                 </div>
 
                 {/* Title */}
-                <h4 className="font-serif text-lg font-medium text-[#E6E4DD] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
+                <h4 className="font-serif text-lg font-medium text-[#F3F4F6] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
                   {entry.title}
                 </h4>
 
@@ -377,7 +377,7 @@ export const ReflectionsAnalytics = ({ entries, section, onOpenEntry }) => {
                     "{entry.takeaway}"
                   </blockquote>
                 ) : (
-                  <p className="mt-1 text-xs text-[#8E9299] light:text-[#6C707E] line-clamp-2">
+                  <p className="mt-1 text-xs text-[#9CA3AF] light:text-[#6C707E] line-clamp-2">
                     {entry.preview}
                   </p>
                 )}

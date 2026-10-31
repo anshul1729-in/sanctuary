@@ -53,26 +53,24 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between py-8 px-4 sm:px-6">
+    <div className="min-h-screen flex flex-col justify-between py-8 px-4 sm:px-6 glass-ambient-bg">
       {/* Top Bar with theme toggle & branding */}
       <div className="max-w-md mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-sage-400 light:bg-sage-600 animate-pulse" />
-          <span className="text-xs font-mono uppercase tracking-widest text-[#8E9299] light:text-[#6C707E]">
+          <span className="text-xs font-mono uppercase tracking-widest text-[#9CA3AF] light:text-[#6C707E]">
             Sanctuary Vault
           </span>
         </div>
         <ThemeToggle />
       </div>
 
-      {/* Main Personal Lock Screen */}
+      {/* Main Personal Lock Screen on Glass */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="w-full max-w-md mx-auto my-auto p-7 sm:p-8 rounded-3xl border shadow-zen
-          bg-[#1A1C20] border-white/10 text-[#E6E4DD]
-          light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]"
+        className="w-full max-w-md mx-auto my-auto p-7 sm:p-8 rounded-3xl shadow-glass glass-card text-[#F3F4F6] light:text-[#2B2D42]"
       >
         <div className="text-center mb-6">
           <div className="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center mb-3
@@ -82,7 +80,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
           <h2 className="font-serif text-3xl font-medium tracking-tight">
             Unlock Sanctuary
           </h2>
-          <p className="mt-1.5 text-xs text-[#8E9299] light:text-[#6C707E] leading-relaxed">
+          <p className="mt-1.5 text-xs text-[#9CA3AF] light:text-[#6C707E] leading-relaxed">
             Personal knowledge vault • Distraction-free focus & conceptual synthesis
           </p>
         </div>
@@ -106,7 +104,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E]">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] light:text-[#6C707E]">
                 Enter Sanctuary Passcode
               </label>
               <span className="text-[11px] font-mono text-sage-400/80 light:text-sage-600/80">
@@ -124,15 +122,15 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
                 onChange={(e) => setPasscode(e.target.value)}
                 placeholder="Enter personal passcode..."
                 className="w-full px-3.5 py-3 pr-11 rounded-xl text-sm font-mono border 
-                  bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
-                  light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
+                  bg-black/50 border-white/10 text-[#F3F4F6] placeholder-neutral-500 focus:border-sage-400
+                  light:bg-white/60 light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPasscode(!showPasscode)}
                 tabIndex={-1}
                 aria-label={showPasscode ? 'Hide passcode' : 'Show passcode'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors cursor-pointer"
               >
                 {showPasscode ? (
                   <EyeOff className="w-4 h-4" />
@@ -149,7 +147,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
               <button
                 type="button"
                 onClick={() => setShowEmailInput(true)}
-                className="text-[11px] text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] underline-offset-4 hover:underline transition-colors"
+                className="text-[11px] text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42] underline-offset-4 hover:underline transition-colors cursor-pointer"
               >
                 Use different admin email
               </button>
@@ -160,7 +158,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
                 className="space-y-1.5 pt-1"
               >
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E]">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] light:text-[#6C707E]">
                     Admin Email Address
                   </label>
                   <button
@@ -169,7 +167,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
                       setEmail(DEFAULT_OWNER_EMAIL)
                       setShowEmailInput(false)
                     }}
-                    className="text-[10px] text-sage-400 hover:underline"
+                    className="text-[10px] text-sage-400 hover:underline cursor-pointer"
                   >
                     Reset to default
                   </button>
@@ -180,8 +178,8 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@domain.com"
                   className="w-full px-3 py-2 rounded-xl text-xs border 
-                    bg-[#121316] border-white/10 text-[#E6E4DD] placeholder-neutral-500 focus:border-sage-400
-                    light:bg-[#FBF9F5] light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
+                    bg-black/50 border-white/10 text-[#F3F4F6] placeholder-neutral-500 focus:border-sage-400
+                    light:bg-white/60 light:border-black/10 light:text-[#2B2D42] focus:outline-none transition-colors"
                 />
               </motion.div>
             )}
@@ -206,14 +204,14 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
 
         {/* Separator / Switch to Local Offline Mode */}
         <div className="mt-6 pt-5 border-t border-white/10 light:border-black/10 text-center">
-          <p className="text-xs text-[#8E9299] light:text-[#6C707E] mb-3">
+          <p className="text-xs text-[#9CA3AF] light:text-[#6C707E] mb-3">
             Want to write offline without cloud sync?
           </p>
           <button
             type="button"
             onClick={onSwitchToLocalMode}
             className="w-full py-2.5 px-4 rounded-xl text-xs font-medium border border-white/15 light:border-black/15
-              bg-white/5 hover:bg-white/10 light:bg-black/5 light:hover:bg-black/10 text-[#E6E4DD] light:text-[#2B2D42]
+              bg-white/5 hover:bg-white/10 light:bg-black/5 light:hover:bg-black/10 text-[#F3F4F6] light:text-[#2B2D42]
               transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <HardDrive className="w-3.5 h-3.5 text-amber-warm" />
@@ -223,7 +221,7 @@ export const UnlockSanctuary = ({ onLoginSuccess, onSwitchToLocalMode }) => {
       </motion.div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-[#8E9299] light:text-[#6C707E] pt-4 flex items-center justify-center gap-2">
+      <div className="text-center text-xs text-[#9CA3AF] light:text-[#6C707E] pt-4 flex items-center justify-center gap-2">
         <ShieldCheck className="w-3.5 h-3.5 text-sage-400" />
         <span>Personal Vault • Public Sign-Up Disabled • Supabase RLS Protected</span>
       </div>

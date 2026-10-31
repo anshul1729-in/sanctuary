@@ -399,7 +399,7 @@ export const FreeMindCanvas = ({
       }}
       className="min-h-screen relative flex flex-col justify-between"
     >
-      {/* Dimming Top Navigation & Toolbar */}
+      {/* Dimming Top Navigation & Toolbar - Frosted Floating Glass Bar */}
       <motion.div
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
@@ -407,14 +407,14 @@ export const FreeMindCanvas = ({
           opacity: shouldDimControls ? 0.08 : 1,
         }}
         transition={{ duration: 0.45, ease: 'easeInOut' }}
-        className={`sticky top-0 z-30 backdrop-blur-md border-b transition-all duration-300
+        className={`sticky top-0 z-30 transition-all duration-300
           ${
             shouldDimControls
               ? 'pointer-events-none'
-              : 'pointer-events-auto bg-[#121316]/80 border-white/5 light:bg-[#FBF9F5]/90 light:border-black/5'
+              : 'pointer-events-auto glass-header'
           }`}
       >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           {/* Back button */}
           <div className="flex items-center gap-3">
             <button
@@ -422,13 +422,13 @@ export const FreeMindCanvas = ({
                 performSave()
                 onBack()
               }}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to {section.title}</span>
             </button>
 
-            <span className="text-xs text-[#8E9299]/30">•</span>
+            <span className="text-xs text-[#9CA3AF]/30">•</span>
 
             {/* Auto-save status */}
             <div className="flex items-center gap-1.5 text-xs font-mono text-sage-400 light:text-sage-600">
@@ -439,7 +439,7 @@ export const FreeMindCanvas = ({
 
           {/* Right utility buttons */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#8E9299] light:text-[#6C707E] font-mono mr-1">
+            <span className="text-xs text-[#9CA3AF] light:text-[#6C707E] font-mono mr-1">
               {readingTime}
             </span>
 
@@ -449,7 +449,7 @@ export const FreeMindCanvas = ({
                 type="button"
                 onClick={() => onToggleFavorite(entry.id)}
                 title={entry.isFavorite ? 'Unstar reflection' : 'Star reflection'}
-                className="p-1.5 rounded-lg text-[#8E9299] hover:text-amber-warm transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-amber-warm transition-colors cursor-pointer"
               >
                 <Star
                   className={`w-4 h-4 ${
@@ -465,7 +465,7 @@ export const FreeMindCanvas = ({
                 type="button"
                 onClick={() => setIsDeleteModalOpen(true)}
                 title="Delete reflection"
-                className="p-1.5 rounded-lg text-[#8E9299] hover:text-terracotta-soft transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-terracotta-soft transition-colors cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -478,7 +478,7 @@ export const FreeMindCanvas = ({
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                 isZenMode
                   ? 'bg-sage-400/20 text-sage-300 light:text-sage-700'
-                  : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42]'
               }`}
             >
               {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -490,7 +490,7 @@ export const FreeMindCanvas = ({
       </motion.div>
 
       {/* Main Free-Mind Writing Column */}
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Dimming Metadata Controls (Category, Sub-Topic, Date, Complexity) */}
         <motion.div
           onMouseEnter={() => setIsHeaderHovered(true)}
@@ -499,26 +499,26 @@ export const FreeMindCanvas = ({
             opacity: shouldDimControls ? 0.08 : 1,
           }}
           transition={{ duration: 0.45, ease: 'easeInOut' }}
-          className={`space-y-4 mb-8 pb-6 border-b border-white/5 light:border-black/5 ${
+          className={`space-y-4 mb-6 pb-4 border-b border-white/5 light:border-black/5 ${
             shouldDimControls ? 'pointer-events-none' : 'pointer-events-auto'
           }`}
         >
           {/* Date stamp & Category Pill Row */}
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
             {/* Auto-filled Date */}
-            <div className="flex items-center gap-1.5 text-[#8E9299] light:text-[#6C707E] font-mono">
+            <div className="flex items-center gap-1.5 text-[#9CA3AF] light:text-[#6C707E] font-mono">
               <Calendar className="w-3.5 h-3.5 text-sage-400 light:text-sage-600" />
               <input
                 type="date"
                 value={dateStr}
                 onChange={(e) => setDateStr(e.target.value)}
-                className="bg-transparent border-none text-[#E6E4DD] light:text-[#2B2D42] focus:outline-none cursor-pointer"
+                className="bg-transparent border-none text-[#F3F4F6] light:text-[#2B2D42] focus:outline-none cursor-pointer"
               />
             </div>
 
             {/* Primary Category Selector with Double-Click to Remove */}
             <div className="flex items-center flex-wrap gap-1.5">
-              <span className="text-[#8E9299] light:text-[#6C707E]">Category:</span>
+              <span className="text-[#9CA3AF] light:text-[#6C707E]">Category:</span>
               <div className="flex items-center flex-wrap gap-1">
                 <AnimatePresence>
                   {domainCategories.map((cat) => {
@@ -539,8 +539,8 @@ export const FreeMindCanvas = ({
                         title="Click to select • Double-click to remove from domain"
                         className={`group relative px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30 font-semibold'
-                            : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                            ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30 font-semibold shadow-xs'
+                            : 'bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E] hover:text-[#F3F4F6] light:hover:text-[#2B2D42]'
                         }`}
                       >
                         <span>{cat}</span>
@@ -568,7 +568,7 @@ export const FreeMindCanvas = ({
                       placeholder="New category..."
                       value={newCategoryInput}
                       onChange={(e) => setNewCategoryInput(e.target.value)}
-                      className="w-28 px-2 py-0.5 text-xs rounded bg-[#121316] border border-sage-400/50 text-[#E6E4DD] focus:outline-none light:bg-[#FBF9F5] light:text-[#2B2D42]"
+                      className="w-28 px-2 py-0.5 text-xs rounded bg-[#090A0C] border border-sage-400/50 text-[#F3F4F6] focus:outline-none light:bg-[#FBF9F5] light:text-[#2B2D42]"
                     />
                     <button
                       type="submit"
@@ -579,7 +579,7 @@ export const FreeMindCanvas = ({
                     <button
                       type="button"
                       onClick={() => setShowCategoryInput(false)}
-                      className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] cursor-pointer"
+                      className="p-0.5 text-[#9CA3AF] hover:text-[#F3F4F6] cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -591,7 +591,7 @@ export const FreeMindCanvas = ({
 
           {/* Sub-Topic Tag Pills with Double-Click to Remove */}
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs text-[#8E9299] light:text-[#6C707E]">
+            <div className="flex items-center justify-between text-xs text-[#9CA3AF] light:text-[#6C707E]">
               <span>Sub-Topic Tag:</span>
               {!showSubTopicInput && (
                 <button
@@ -620,8 +620,8 @@ export const FreeMindCanvas = ({
                       title="Click to select • Double-click to remove from domain"
                       className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-sage-400 text-[#121316] font-semibold shadow-xs'
-                          : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                          ? 'bg-sage-400 text-[#000000] font-semibold shadow-xs'
+                          : 'bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E] hover:text-[#F3F4F6] light:hover:text-[#2B2D42]'
                       }`}
                     >
                       <span>{st}</span>
@@ -631,7 +631,7 @@ export const FreeMindCanvas = ({
               </AnimatePresence>
 
               {availableSubTopics.length === 0 && !showSubTopicInput && (
-                <span className="text-[11px] text-[#8E9299]/70 italic">
+                <span className="text-[11px] text-[#9CA3AF]/70 italic">
                   No sub-topics yet for {category}. Click "+ Custom Tag" to add one.
                 </span>
               )}
@@ -645,7 +645,7 @@ export const FreeMindCanvas = ({
                     placeholder="e.g. Synthesis, Kinetics"
                     value={newSubTopicInput}
                     onChange={(e) => setNewSubTopicInput(e.target.value)}
-                    className="px-2.5 py-1 text-xs rounded-lg border bg-[#1A1C20] border-sage-400/50 text-[#E6E4DD] focus:outline-none light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]"
+                    className="px-2.5 py-1 text-xs rounded-lg border bg-[#0B0C0F] border-sage-400/50 text-[#F3F4F6] focus:outline-none light:bg-[#F3EFE6] light:border-black/10 light:text-[#2B2D42]"
                   />
                   <button
                     type="submit"
@@ -656,7 +656,7 @@ export const FreeMindCanvas = ({
                   <button
                     type="button"
                     onClick={() => setShowSubTopicInput(false)}
-                    className="p-1 text-[#8E9299] hover:text-[#E6E4DD] cursor-pointer"
+                    className="p-1 text-[#9CA3AF] hover:text-[#F3F4F6] cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -665,7 +665,7 @@ export const FreeMindCanvas = ({
             </div>
           </div>
 
-          {/* Session Time & Takeaway Row (Collapsible per domain) */}
+          {/* Session Time & Takeaway Row */}
           <div className="pt-1 flex flex-wrap items-center gap-3 text-xs">
             {/* Session Time (Start Time & End Time, Collapsible / Double-click to hide) */}
             <AnimatePresence>
@@ -674,14 +674,14 @@ export const FreeMindCanvas = ({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-                  className="flex items-center flex-wrap gap-2.5 p-1.5 px-2.5 rounded-xl border border-white/5 bg-white/5 light:border-black/5 light:bg-black/5"
+                  className="flex items-center flex-wrap gap-2.5 p-1.5 px-2.5 rounded-xl border border-white/5 bg-white/5 light:border-black/5 light:bg-black/5 backdrop-blur-sm"
                 >
                   <div className="flex items-center gap-1.5 text-xs">
                     <Clock className="w-3.5 h-3.5 text-amber-warm" />
                     <span
                       onDoubleClick={() => setShowSessionTime(false)}
                       title="Double-click label to hide Session Time"
-                      className="text-[#8E9299] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none font-medium"
+                      className="text-[#9CA3AF] light:text-[#6C707E] cursor-pointer hover:text-amber-warm transition-colors select-none font-medium"
                     >
                       Session:
                     </span>
@@ -689,7 +689,7 @@ export const FreeMindCanvas = ({
 
                   {/* Start Time */}
                   <div className="flex items-center gap-1 text-xs font-mono">
-                    <span className="text-[#8E9299] light:text-[#6C707E] text-[11px]">Start:</span>
+                    <span className="text-[#9CA3AF] light:text-[#6C707E] text-[11px]">Start:</span>
                     <input
                       type="time"
                       value={startTime}
@@ -697,7 +697,7 @@ export const FreeMindCanvas = ({
                         setStartTime(e.target.value)
                         handleTypingActivity()
                       }}
-                      className="px-1.5 py-0.5 rounded bg-black/20 light:bg-white/60 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                      className="px-1.5 py-0.5 rounded bg-black/40 light:bg-white/60 border border-white/10 light:border-black/10 text-[#F3F4F6] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
                     />
                     {!startTime && (
                       <button
@@ -713,7 +713,7 @@ export const FreeMindCanvas = ({
 
                   {/* End Time */}
                   <div className="flex items-center gap-1 text-xs font-mono">
-                    <span className="text-[#8E9299] light:text-[#6C707E] text-[11px]">End:</span>
+                    <span className="text-[#9CA3AF] light:text-[#6C707E] text-[11px]">End:</span>
                     <input
                       type="time"
                       value={endTime}
@@ -721,7 +721,7 @@ export const FreeMindCanvas = ({
                         setEndTime(e.target.value)
                         handleTypingActivity()
                       }}
-                      className="px-1.5 py-0.5 rounded bg-black/20 light:bg-white/60 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
+                      className="px-1.5 py-0.5 rounded bg-black/40 light:bg-white/60 border border-white/10 light:border-black/10 text-[#F3F4F6] light:text-[#2B2D42] text-xs font-mono focus:outline-none focus:border-sage-400"
                     />
                     {!endTime && (
                       <button
@@ -746,7 +746,7 @@ export const FreeMindCanvas = ({
                     type="button"
                     onClick={() => setShowSessionTime(false)}
                     title="Hide Session Time (Double-click label to hide)"
-                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors cursor-pointer"
+                    className="p-0.5 text-[#9CA3AF] hover:text-[#F3F4F6] rounded transition-colors cursor-pointer"
                   >
                     <EyeOff className="w-3 h-3" />
                   </button>
@@ -756,7 +756,7 @@ export const FreeMindCanvas = ({
                   type="button"
                   onClick={() => setShowSessionTime(true)}
                   title="Show Session Time (Start & End Time)"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-[#9CA3AF] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer backdrop-blur-sm"
                 >
                   <Clock className="w-3 h-3 text-amber-warm" />
                   <span>+ Session Time</span>
@@ -764,7 +764,7 @@ export const FreeMindCanvas = ({
               )}
             </AnimatePresence>
 
-            {/* Aha! Takeaway Input (Collapsible / Double-click to hide) */}
+            {/* Aha! Takeaway Input */}
             <AnimatePresence>
               {showTakeaway ? (
                 <motion.div
@@ -776,7 +776,7 @@ export const FreeMindCanvas = ({
                   <span
                     onDoubleClick={() => setShowTakeaway(false)}
                     title="Double-click label to hide Takeaway field"
-                    className="text-[#8E9299] light:text-[#6C707E] font-serif italic whitespace-nowrap cursor-pointer hover:text-sage-400 transition-colors select-none"
+                    className="text-[#9CA3AF] light:text-[#6C707E] font-serif italic whitespace-nowrap cursor-pointer hover:text-sage-400 transition-colors select-none"
                   >
                     Aha! Takeaway:
                   </span>
@@ -789,13 +789,13 @@ export const FreeMindCanvas = ({
                       setTakeaway(e.target.value)
                       handleTypingActivity()
                     }}
-                    className="w-full px-2 py-0.5 rounded bg-white/5 light:bg-black/5 border border-white/10 light:border-black/10 text-[#E6E4DD] light:text-[#2B2D42] text-xs italic font-serif focus:outline-none focus:border-sage-400"
+                    className="w-full px-2.5 py-1 rounded-lg bg-black/40 light:bg-black/5 border border-white/10 light:border-black/10 text-[#F3F4F6] light:text-[#2B2D42] text-xs italic font-serif focus:outline-none focus:border-sage-400 backdrop-blur-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowTakeaway(false)}
                     title="Hide Takeaway field"
-                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors cursor-pointer"
+                    className="p-0.5 text-[#9CA3AF] hover:text-[#F3F4F6] rounded transition-colors cursor-pointer"
                   >
                     <EyeOff className="w-3 h-3" />
                   </button>
@@ -805,7 +805,7 @@ export const FreeMindCanvas = ({
                   type="button"
                   onClick={() => setShowTakeaway(true)}
                   title="Show Aha! Takeaway field"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-serif italic text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-serif italic text-[#9CA3AF] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer backdrop-blur-sm"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Takeaway</span>
@@ -815,42 +815,48 @@ export const FreeMindCanvas = ({
           </div>
         </motion.div>
 
-        {/* Expressive Editorial Title Input - Auto-expanding textarea so long headings wrap and are visible all at once without clipping */}
-        <div className="mb-6">
-          <textarea
-            ref={titleTextareaRef}
-            rows={1}
-            placeholder="Title of today's breakthrough..."
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value)
-              handleTypingActivity()
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                // Smoothly focus the TipTap editor canvas below
-                if (editorInstanceRef.current) {
-                  editorInstanceRef.current.commands.focus('start')
-                }
-              }
-            }}
-            className="w-full font-serif text-3xl sm:text-4xl font-medium tracking-tight bg-transparent border-none 
-              text-[#E6E4DD] light:text-[#2B2D42] placeholder-[#8E9299]/40 focus:outline-none resize-none overflow-hidden leading-tight break-words"
-          />
-        </div>
+        {/* The 3rd Surface: Floating Glass Slate for Notes */}
+        <div className="glass-slate rounded-3xl p-6 sm:p-10 transition-all duration-300 relative shadow-2xl">
+          {/* Subtle Specular Top Sheen Highlight */}
+          <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent rounded-t-3xl pointer-events-none" />
 
-        {/* Live Rich-Text Canvas (TipTap with live markdown support & attached responsive toolbar) */}
-        <div className="relative">
-          <TipTapEditor
-            editorRef={editorInstanceRef}
-            content={content}
-            onChange={(newHtml) => {
-              setContent(newHtml)
-              handleTypingActivity()
-            }}
-            onTypingStateChange={handleTypingActivity}
-          />
+          {/* Expressive Editorial Title Input - Auto-expanding textarea on the glass sheet */}
+          <div className="mb-6">
+            <textarea
+              ref={titleTextareaRef}
+              rows={1}
+              placeholder="Title of today's breakthrough..."
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                handleTypingActivity()
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  // Smoothly focus the TipTap editor canvas below
+                  if (editorInstanceRef.current) {
+                    editorInstanceRef.current.commands.focus('start')
+                  }
+                }
+              }}
+              className="w-full font-serif text-3xl sm:text-4xl font-medium tracking-tight bg-transparent border-none 
+                text-[#F9F9FB] light:text-[#2B2D42] placeholder-[#9CA3AF]/40 focus:outline-none resize-none overflow-hidden leading-tight break-words drop-shadow-sm"
+            />
+          </div>
+
+          {/* Live Rich-Text Canvas on the Glass Surface */}
+          <div className="relative">
+            <TipTapEditor
+              editorRef={editorInstanceRef}
+              content={content}
+              onChange={(newHtml) => {
+                setContent(newHtml)
+                handleTypingActivity()
+              }}
+              onTypingStateChange={handleTypingActivity}
+            />
+          </div>
         </div>
       </main>
 
@@ -872,7 +878,7 @@ export const FreeMindCanvas = ({
         <div className="fixed bottom-4 right-4 z-40">
           <button
             onClick={() => setIsZenMode(false)}
-            className="px-3 py-1.5 rounded-xl text-xs font-mono bg-sage-500/80 text-white backdrop-blur-sm shadow-md hover:bg-sage-600 transition-all cursor-pointer"
+            className="px-3 py-1.5 rounded-xl text-xs font-mono bg-sage-500/80 text-white backdrop-blur-md shadow-lg hover:bg-sage-600 transition-all cursor-pointer"
           >
             Exit Zen Mode
           </button>

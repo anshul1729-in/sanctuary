@@ -9,13 +9,13 @@ export default {
     extend: {
       colors: {
         obsidian: {
-          bg: '#121316',
-          card: '#1A1C20',
-          elevated: '#22252A',
-          border: 'rgba(255, 255, 255, 0.07)',
+          bg: '#000000',
+          card: 'rgba(14, 15, 18, 0.65)',
+          elevated: 'rgba(22, 24, 30, 0.75)',
+          border: 'rgba(255, 255, 255, 0.08)',
           'border-subtle': 'rgba(255, 255, 255, 0.04)',
-          text: '#E6E4DD',
-          muted: '#8E9299',
+          text: '#F3F4F6',
+          muted: '#9CA3AF',
         },
         paper: {
           bg: '#FBF9F5',
@@ -57,9 +57,10 @@ export default {
         relaxed: '1.8',
       },
       boxShadow: {
-        'soft-dark': '0 8px 30px rgba(0, 0, 0, 0.35)',
+        'soft-dark': '0 8px 30px rgba(0, 0, 0, 0.5)',
         'soft-light': '0 8px 30px rgba(43, 45, 66, 0.06)',
-        'zen': '0 20px 40px -15px rgba(0,0,0,0.25)',
+        'zen': '0 20px 40px -15px rgba(0,0,0,0.7)',
+        'glass': '0 24px 60px -12px rgba(0, 0, 0, 0.85), inset 0 1px 1px 0 rgba(255, 255, 255, 0.14)',
       }
     },
   },

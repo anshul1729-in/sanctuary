@@ -89,38 +89,36 @@ export const JournalStream = ({
 
   return (
     <div className="space-y-6">
-      {/* Search and Category Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 rounded-2xl border
-        bg-[#1A1C20]/60 border-white/5 backdrop-blur-sm
-        light:bg-[#F3EFE6]/70 light:border-black/5">
-        
+      {/* Search and Category Filter Toolbar on Dark Glass */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2.5 rounded-2xl glass-card">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E9299] light:text-[#6C707E]" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] light:text-[#6C707E]" />
           <input
             type="text"
-            placeholder="Search reflections, algorithms, complexity..."
+            placeholder="Search reflections, algorithms, insights..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border-none bg-transparent 
-              text-[#E6E4DD] placeholder-[#8E9299]/60 focus:outline-none focus:ring-1 focus:ring-sage-400
+              text-[#F3F4F6] placeholder-[#9CA3AF]/60 focus:outline-none focus:ring-1 focus:ring-sage-400
               light:text-[#2B2D42] light:placeholder-[#6C707E]/60"
           />
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 px-2 sm:px-0">
-          {categories.slice(0, 5).map((cat) => (
+        {/* Category Pills Scroller */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+          <Filter className="w-3.5 h-3.5 text-[#9CA3AF] light:text-[#6C707E] ml-1 mr-0.5 flex-shrink-0" />
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => {
                 setSelectedCategory(cat)
                 setSelectedSubTopic('All')
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30'
-                  : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] hover:bg-white/5 light:hover:bg-black/5'
+                  ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold border border-sage-400/30'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6] hover:bg-white/5 light:text-[#6C707E] light:hover:text-[#2B2D42] light:hover:bg-black/5'
               }`}
             >
               {cat}
@@ -129,20 +127,18 @@ export const JournalStream = ({
         </div>
       </div>
 
-      {/* Sub-Topic Quick Filter Chips (if available) */}
-      {subTopics.length > 2 && (
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <span className="text-[#8E9299] light:text-[#6C707E] px-1 flex items-center gap-1">
-            <Tag className="w-3 h-3" /> Sub-topics:
-          </span>
+      {/* SubTopic Filter Secondary Row (if available) */}
+      {subTopics.length > 1 && (
+        <div className="flex items-center gap-1.5 overflow-x-auto px-1 no-scrollbar text-xs text-[#9CA3AF] light:text-[#6C707E]">
+          <span className="text-[11px] uppercase tracking-wider font-mono mr-1">Topics:</span>
           {subTopics.map((st) => (
             <button
               key={st}
               onClick={() => setSelectedSubTopic(st)}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer ${
                 selectedSubTopic === st
-                  ? 'bg-[#121316] text-[#E6E4DD] border border-white/20 light:bg-[#FBF9F5] light:text-[#2B2D42] light:border-black/20 font-medium'
-                  : 'text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
+                  ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-medium'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6] bg-white/5 light:bg-black/5 light:text-[#6C707E]'
               }`}
             >
               {st}
@@ -151,23 +147,23 @@ export const JournalStream = ({
         </div>
       )}
 
-      {/* Chronological List of Entries */}
+      {/* Entries Feed */}
       {filteredEntries.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl border border-dashed border-white/10 light:border-black/10 bg-[#1A1C20]/20 light:bg-[#F3EFE6]/30">
-          <Sparkles className="w-8 h-8 mx-auto text-sage-400 light:text-sage-600 mb-3 opacity-80" />
-          <h3 className="font-serif text-xl font-medium text-[#E6E4DD] light:text-[#2B2D42]">
+        <div className="p-12 text-center rounded-2xl glass-card">
+          <Sparkles className="w-8 h-8 mx-auto text-sage-400/50 light:text-sage-600/50 mb-3" />
+          <h3 className="font-serif text-xl font-medium text-[#F3F4F6] light:text-[#2B2D42]">
             {searchQuery || selectedCategory !== 'All'
               ? 'No matching reflections found'
               : 'Your canvas is tranquil and waiting'}
           </h3>
-          <p className="mt-1 text-sm text-[#8E9299] light:text-[#6C707E] max-w-sm mx-auto">
+          <p className="mt-1 text-sm text-[#9CA3AF] light:text-[#6C707E] max-w-sm mx-auto">
             {searchQuery || selectedCategory !== 'All'
               ? 'Try adjusting your search query or topic filter.'
               : 'Record today’s algorithmic breakthrough or conceptual insight.'}
           </p>
           <button
             onClick={onNewEntry}
-            className="mt-5 px-4 py-2 rounded-xl text-sm font-medium bg-sage-500 hover:bg-sage-600 text-white shadow-sm transition-all"
+            className="mt-5 px-4 py-2 rounded-xl text-sm font-medium bg-sage-500 hover:bg-sage-600 text-white shadow-sm transition-all cursor-pointer"
           >
             + Write Today's Learning
           </button>
@@ -184,9 +180,7 @@ export const JournalStream = ({
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.2, delay: index * 0.03 }}
                 onClick={() => onOpenEntry(entry.id)}
-                className="group relative p-5 sm:p-6 rounded-2xl border cursor-pointer transition-all duration-300
-                  bg-[#1A1C20] border-white/5 hover:border-sage-400/40 shadow-sm hover:shadow-soft-dark
-                  light:bg-[#F3EFE6] light:border-black/5 light:hover:border-sage-600/40 light:hover:shadow-soft-light"
+                className="group relative p-5 sm:p-6 rounded-2xl cursor-pointer transition-all duration-300 glass-card hover:border-sage-400/40 hover:shadow-2xl"
               >
                 {/* Header row: Date, Category Pills, Reading Time */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
@@ -194,14 +188,14 @@ export const JournalStream = ({
                     <span className="text-xs font-mono text-sage-400 light:text-sage-600 font-medium">
                       {formatCardDate(entry.date)}
                     </span>
-                    <span className="text-[#8E9299]/40 light:text-[#6C707E]/40">•</span>
+                    <span className="text-[#9CA3AF]/40 light:text-[#6C707E]/40">•</span>
                     <div className="flex items-center gap-1">
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E]">
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E]">
                         {entry.category}
                       </span>
                       {entry.subTopic && (
                         <>
-                          <span className="text-[10px] text-[#8E9299]/50">→</span>
+                          <span className="text-[10px] text-[#9CA3AF]/50">→</span>
                           <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-sage-400/10 text-sage-300 light:text-sage-700">
                             {entry.subTopic}
                           </span>
@@ -228,7 +222,7 @@ export const JournalStream = ({
                       </span>
                     )}
 
-                    <div className="flex items-center gap-1 text-xs text-[#8E9299] light:text-[#6C707E]">
+                    <div className="flex items-center gap-1 text-xs text-[#9CA3AF] light:text-[#6C707E]">
                       <Clock className="w-3 h-3" />
                       <span>{entry.readingTime || '2 min read'}</span>
                     </div>
@@ -241,7 +235,7 @@ export const JournalStream = ({
                         onToggleFavorite(entry.id)
                       }}
                       title={entry.isFavorite ? 'Unstar' : 'Star reflection'}
-                      className="p-1 rounded-lg text-[#8E9299] hover:text-amber-warm transition-colors"
+                      className="p-1 rounded-lg text-[#9CA3AF] hover:text-amber-warm transition-colors cursor-pointer"
                     >
                       <Star
                         className={`w-3.5 h-3.5 ${
@@ -257,7 +251,7 @@ export const JournalStream = ({
                         onDeleteEntry(entry)
                       }}
                       title="Delete entry"
-                      className="p-1 rounded-lg text-[#8E9299] hover:text-terracotta-soft transition-colors opacity-0 group-hover:opacity-100"
+                      className="p-1 rounded-lg text-[#9CA3AF] hover:text-terracotta-soft transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -265,12 +259,12 @@ export const JournalStream = ({
                 </div>
 
                 {/* Entry Title */}
-                <h3 className="font-serif text-xl sm:text-2xl font-medium tracking-tight text-[#E6E4DD] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
+                <h3 className="font-serif text-xl sm:text-2xl font-medium tracking-tight text-[#F3F4F6] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
                   {entry.title || 'Untitled Learning Reflection'}
                 </h3>
 
                 {/* Calm 2-line Content Preview */}
-                <p className="mt-2 text-sm text-[#8E9299] light:text-[#6C707E] line-clamp-2 leading-relaxed">
+                <p className="mt-2 text-sm text-[#9CA3AF] light:text-[#6C707E] line-clamp-2 leading-relaxed">
                   {entry.preview ||
                     'Click to inspect this reflection and unpack the detailed technical notes.'}
                 </p>
@@ -286,7 +280,7 @@ export const JournalStream = ({
                 <div className="mt-3 flex items-center justify-between text-xs pt-2 border-t border-white/5 light:border-black/5 opacity-80 group-hover:opacity-100 transition-opacity">
                   <div className="flex flex-wrap gap-1">
                     {(entry.tags || []).slice(0, 3).map((t) => (
-                      <span key={t} className="text-[10px] text-[#8E9299] light:text-[#6C707E]">
+                      <span key={t} className="text-[10px] text-[#9CA3AF] light:text-[#6C707E]">
                         #{t}
                       </span>
                     ))}

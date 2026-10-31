@@ -121,12 +121,12 @@ export const TipTapEditor = ({
 
   return (
     <div className="w-full relative group">
-      {/* Editorial Floating / Attached Toolbar - positioned with top-14 to avoid colliding with top nav */}
+      {/* Editorial Floating Glass Toolbar docked above the note content */}
       {!readOnly && (
         <div
-          className="sticky top-14 sm:top-16 z-20 mb-6 inline-flex max-w-full overflow-x-auto no-scrollbar items-center gap-1 p-1 sm:p-1.5 rounded-2xl backdrop-blur-md 
-            bg-[#1A1C20]/90 border border-white/10 shadow-zen transition-all duration-300
-            light:bg-[#F3EFE6]/95 light:border-black/10 light:shadow-sm"
+          className="sticky top-14 sm:top-16 z-20 mb-6 inline-flex max-w-full overflow-x-auto no-scrollbar items-center gap-1 p-1 sm:p-1.5 rounded-2xl backdrop-blur-2xl 
+            bg-[#050608]/85 border border-white/10 shadow-2xl transition-all duration-300
+            light:bg-white/85 light:border-black/10 light:shadow-sm"
         >
           <ToolbarBtn
             icon={Bold}
@@ -215,8 +215,8 @@ export const TipTapEditor = ({
         </div>
       )}
 
-      {/* Editor Content Area */}
-      <div className="prose prose-invert max-w-none focus:outline-none">
+      {/* Editor Content Area on the Glass Slate */}
+      <div className="prose prose-invert max-w-none focus:outline-none text-[#F3F4F6] light:text-[#2B2D42]">
         <EditorContent editor={editor} />
       </div>
     </div>

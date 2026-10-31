@@ -105,11 +105,11 @@ export const SanctuaryHub = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-sage-400 light:bg-sage-600 animate-pulse" />
-              <span className="text-xs font-mono uppercase tracking-widest text-[#8E9299] light:text-[#6C707E]">
+              <span className="text-xs font-mono uppercase tracking-widest text-[#9CA3AF] light:text-[#6C707E]">
                 {formattedDate}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-tight text-[#E6E4DD] light:text-[#2B2D42]">
+            <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-tight text-[#F3F4F6] light:text-[#2B2D42]">
               Sanctuary
             </h1>
           </div>
@@ -129,17 +129,15 @@ export const SanctuaryHub = ({
           </div>
         </header>
 
-        {/* Motivational Prompt Card */}
-        <div className="my-8 p-5 sm:p-6 rounded-2xl border transition-all duration-300
-          bg-[#1A1C20]/40 border-white/5 backdrop-blur-xs
-          light:bg-[#F3EFE6]/60 light:border-black/5">
+        {/* Motivational Prompt Card on Dark Glass */}
+        <div className="my-8 p-5 sm:p-6 rounded-2xl glass-card transition-all duration-300">
           <div className="flex items-start gap-3">
             <Compass className="w-5 h-5 mt-0.5 text-sage-400 light:text-sage-600 flex-shrink-0" />
             <div>
-              <p className="font-serif italic text-base sm:text-lg text-[#E6E4DD]/90 light:text-[#2B2D42]/90 leading-relaxed">
+              <p className="font-serif italic text-base sm:text-lg text-[#F3F4F6]/90 light:text-[#2B2D42]/90 leading-relaxed">
                 "{peacefulPrompts[promptIndex]}"
               </p>
-              <div className="mt-2 text-xs text-[#8E9299] light:text-[#6C707E] flex items-center gap-4">
+              <div className="mt-2 text-xs text-[#9CA3AF] light:text-[#6C707E] flex items-center gap-4">
                 <span>{totalEntries} lifetime reflections logged</span>
                 <span>•</span>
                 <span>{globalStreak.activeDaysCount} active writing days</span>
@@ -151,10 +149,10 @@ export const SanctuaryHub = ({
         {/* Section Cards Grid */}
         <div className="mt-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#8E9299] light:text-[#6C707E]">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#9CA3AF] light:text-[#6C707E]">
               Knowledge Domains
             </h2>
-            <span className="text-xs text-[#8E9299] light:text-[#6C707E]">
+            <span className="text-xs text-[#9CA3AF] light:text-[#6C707E]">
               {sections.length} {sections.length === 1 ? 'Space' : 'Spaces'}
             </span>
           </div>
@@ -170,11 +168,11 @@ export const SanctuaryHub = ({
                   whileHover={{ y: -4, transition: { duration: 0.2 } }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => onSelectSection(section.id)}
-                  className={`group relative p-6 rounded-2xl border cursor-pointer transition-all duration-300 flex flex-col justify-between
+                  className={`group relative p-6 rounded-2xl cursor-pointer transition-all duration-300 flex flex-col justify-between glass-card
                     ${
                       isCS
-                        ? 'bg-[#1A1C20] border-sage-400/30 hover:border-sage-400/60 shadow-soft-dark light:bg-[#F3EFE6] light:border-sage-600/30 light:hover:border-sage-600/60 light:shadow-soft-light'
-                        : 'bg-[#1A1C20] border-white/5 hover:border-white/20 light:bg-[#F3EFE6] light:border-black/5 light:hover:border-black/20'
+                        ? 'border-sage-400/35 hover:border-sage-400/70 shadow-lg light:border-sage-600/30'
+                        : 'hover:border-white/25 light:hover:border-black/20'
                     }`}
                 >
                   {/* Subtle top indicator */}
@@ -192,33 +190,33 @@ export const SanctuaryHub = ({
                         {isCS ? <Terminal className="w-5 h-5" /> : <Cpu className="w-5 h-5" />}
                       </div>
                       <div>
-                        <h3 className="font-serif text-2xl font-medium text-[#E6E4DD] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
+                        <h3 className="font-serif text-2xl font-medium text-[#F3F4F6] light:text-[#2B2D42] group-hover:text-sage-400 light:group-hover:text-sage-600 transition-colors">
                           {section.title}
                         </h3>
-                        <p className="text-xs text-[#8E9299] light:text-[#6C707E] line-clamp-1">
+                        <p className="text-xs text-[#9CA3AF] light:text-[#6C707E] line-clamp-1">
                           {section.subtitle}
                         </p>
                       </div>
                     </div>
 
-                    <p className="text-sm text-[#8E9299] light:text-[#6C707E] leading-relaxed mb-6 line-clamp-2">
+                    <p className="text-sm text-[#9CA3AF] light:text-[#6C707E] leading-relaxed mb-6 line-clamp-2">
                       {section.description}
                     </p>
                   </div>
 
                   {/* Tranquil Live Stats */}
                   <div className="pt-4 border-t border-white/5 light:border-black/5 space-y-2">
-                    <div className="text-xs font-mono text-[#8E9299] light:text-[#6C707E]">
+                    <div className="text-xs font-mono text-[#9CA3AF] light:text-[#6C707E]">
                       Last reflection:{' '}
-                      <span className="text-[#E6E4DD] light:text-[#2B2D42] font-sans font-medium">
+                      <span className="text-[#F3F4F6] light:text-[#2B2D42] font-sans font-medium">
                         {stats.lastReflectionLabel}
                       </span>{' '}
                       •{' '}
-                      <span className="text-[#E6E4DD] light:text-[#2B2D42] font-sans font-medium">
+                      <span className="text-[#F3F4F6] light:text-[#2B2D42] font-sans font-medium">
                         {stats.thisMonthLogs} logs
                       </span>{' '}
                       this month •{' '}
-                      <span className="text-[#E6E4DD] light:text-[#2B2D42] font-sans font-medium">
+                      <span className="text-[#F3F4F6] light:text-[#2B2D42] font-sans font-medium">
                         {stats.activeDays} {stats.activeDays === 1 ? 'day' : 'days'}
                       </span>{' '}
                       recorded
@@ -229,13 +227,13 @@ export const SanctuaryHub = ({
                         {(section.categories || []).slice(0, 3).map((cat) => (
                           <span
                             key={cat}
-                            className="text-[11px] px-2 py-0.5 rounded-md bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E]"
+                            className="text-[11px] px-2 py-0.5 rounded-md bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E]"
                           >
                             {cat}
                           </span>
                         ))}
                         {(section.categories || []).length > 3 && (
-                          <span className="text-[11px] px-1.5 py-0.5 text-[#8E9299] light:text-[#6C707E]">
+                          <span className="text-[11px] px-1.5 py-0.5 text-[#9CA3AF] light:text-[#6C707E]">
                             +{(section.categories || []).length - 3}
                           </span>
                         )}
@@ -259,17 +257,17 @@ export const SanctuaryHub = ({
               className="p-6 rounded-2xl border border-dashed border-white/15 light:border-black/15 
                 hover:border-sage-400/50 light:hover:border-sage-600/50 cursor-pointer 
                 transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[220px] 
-                bg-[#1A1C20]/20 hover:bg-[#1A1C20]/50 light:bg-[#F3EFE6]/30 light:hover:bg-[#F3EFE6]/70 group"
+                glass-card hover:bg-white/[0.04] group"
             >
               <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-3 
-                bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] 
+                bg-white/5 light:bg-black/5 text-[#9CA3AF] light:text-[#6C707E] 
                 group-hover:bg-sage-400/20 group-hover:text-sage-400 light:group-hover:text-sage-600 transition-all">
                 <Plus className="w-5 h-5" />
               </div>
-              <h3 className="font-serif text-lg font-medium text-[#E6E4DD] light:text-[#2B2D42] mb-1">
+              <h3 className="font-serif text-lg font-medium text-[#F3F4F6] light:text-[#2B2D42] mb-1">
                 + New Domain
               </h3>
-              <p className="text-xs text-[#8E9299] light:text-[#6C707E] max-w-xs">
+              <p className="text-xs text-[#9CA3AF] light:text-[#6C707E] max-w-xs">
                 Expand Sanctuary to system design, mathematics, architecture, or creative studies.
               </p>
             </motion.div>
@@ -278,7 +276,7 @@ export const SanctuaryHub = ({
       </div>
 
       {/* Serene Footer */}
-      <footer className="mt-16 pt-6 border-t border-white/5 light:border-black/5 text-center text-xs text-[#8E9299] light:text-[#6C707E] flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="mt-16 pt-6 border-t border-white/5 light:border-black/5 text-center text-xs text-[#9CA3AF] light:text-[#6C707E] flex flex-col sm:flex-row items-center justify-between gap-2">
         <p>Sanctuary — Distraction-free daily learning & conceptual synthesis</p>
         <p className="font-mono text-[11px] opacity-70">Press N anytime in a space to write</p>
       </footer>

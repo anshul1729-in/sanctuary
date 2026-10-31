@@ -68,21 +68,21 @@ export const SectionSpace = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={onBackToHub}
-                className="group inline-flex items-center gap-1.5 text-xs font-mono text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors"
+                className="group inline-flex items-center gap-1.5 text-xs font-mono text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                 <span>Sanctuary Hub</span>
               </button>
-              <span className="text-xs text-[#8E9299]/40">•</span>
+              <span className="text-xs text-[#9CA3AF]/40">•</span>
               <span className="text-xs font-mono text-sage-400 light:text-sage-600 font-medium">
                 {section.title}
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-tight text-[#E6E4DD] light:text-[#2B2D42]">
+            <h1 className="text-3xl sm:text-4xl font-serif font-medium tracking-tight text-[#F3F4F6] light:text-[#2B2D42]">
               {section.title}
             </h1>
-            <p className="text-xs text-[#8E9299] light:text-[#6C707E]">
+            <p className="text-xs text-[#9CA3AF] light:text-[#6C707E]">
               {section.subtitle || section.description}
             </p>
           </div>
@@ -102,7 +102,7 @@ export const SectionSpace = ({
               onClick={onNewEntry}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium 
                 bg-sage-500 hover:bg-sage-600 text-white shadow-sm transition-all duration-200
-                hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                hover:shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Write Today's Learning</span>
@@ -115,15 +115,15 @@ export const SectionSpace = ({
           </div>
         </header>
 
-        {/* Segmented Pill Switcher */}
+        {/* Segmented Pill Switcher on Glass Card */}
         <div className="my-6 flex items-center justify-between flex-wrap gap-4">
-          <div className="inline-flex p-1 rounded-2xl bg-[#1A1C20] light:bg-[#F3EFE6] border border-white/5 light:border-black/5">
+          <div className="inline-flex p-1 rounded-2xl glass-card">
             <button
               onClick={() => setActiveTab('stream')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === 'stream'
                   ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold shadow-xs'
-                  : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42]'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -135,10 +135,10 @@ export const SectionSpace = ({
 
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === 'analytics'
                   ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 font-semibold shadow-xs'
-                  : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6] light:text-[#6C707E] light:hover:text-[#2B2D42]'
               }`}
             >
               <LineChart className="w-3.5 h-3.5" />
@@ -146,7 +146,7 @@ export const SectionSpace = ({
             </button>
           </div>
 
-          <div className="text-xs text-[#8E9299] light:text-[#6C707E] hidden md:block font-mono">
+          <div className="text-xs text-[#9CA3AF] light:text-[#6C707E] hidden md:block font-mono">
             Focus Mode • Press <kbd className="px-1.5 py-0.5 rounded bg-white/5 light:bg-black/5 font-bold">N</kbd> anytime
           </div>
         </div>
@@ -186,7 +186,7 @@ export const SectionSpace = ({
       />
 
       {/* Footer */}
-      <footer className="mt-16 pt-6 border-t border-white/5 light:border-black/5 text-center text-xs text-[#8E9299] light:text-[#6C707E]">
+      <footer className="mt-16 pt-6 border-t border-white/5 light:border-black/5 text-center text-xs text-[#9CA3AF] light:text-[#6C707E]">
         <p>Reflecting inside {section.title} • Sanctuary of Focused Thought</p>
       </footer>
     </motion.div>
