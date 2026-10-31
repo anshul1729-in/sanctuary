@@ -49,6 +49,28 @@ export const FreeMindCanvas = ({
   const [title, setTitle] = useState(entry?.title || '')
   const [content, setContent] = useState(entry?.content || '')
 
+  // References for auto-expanding multiline title and body editor focus
+  const titleTextareaRef = useRef(null)
+  const editorInstanceRef = useRef(null)
+
+  // Dynamically auto-expand the title textarea so long headings wrap and never clip on the right
+  const adjustTitleHeight = useCallback(() => {
+    const el = titleTextareaRef.current
+    if (el) {
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }
+  }, [])
+
+  useEffect(() => {
+    adjustTitleHeight()
+  }, [title, adjustTitleHeight])
+
+  useEffect(() => {
+    window.addEventListener('resize', adjustTitleHeight)
+    return () => window.removeEventListener('resize', adjustTitleHeight)
+  }, [adjustTitleHeight])
+
   // Active Category state
   const [category, setCategory] = useState(() => {
     if (entry?.category && domainCategories.includes(entry.category)) {
@@ -255,6 +277,15 @@ export const FreeMindCanvas = ({
     performSave,
   ])
 
+  // Guaranteed auto-save on component unmount (e.g. browser back button)
+  const performSaveRef = useRef(performSave)
+  performSaveRef.current = performSave
+  useEffect(() => {
+    return () => {
+      performSaveRef.current()
+    }
+  }, [])
+
   // Category addition & removal
   const handleAddCategory = (e) => {
     e.preventDefault()
@@ -391,7 +422,7 @@ export const FreeMindCanvas = ({
                 performSave()
                 onBack()
               }}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to {section.title}</span>
@@ -418,7 +449,7 @@ export const FreeMindCanvas = ({
                 type="button"
                 onClick={() => onToggleFavorite(entry.id)}
                 title={entry.isFavorite ? 'Unstar reflection' : 'Star reflection'}
-                className="p-1.5 rounded-lg text-[#8E9299] hover:text-amber-warm transition-colors"
+                className="p-1.5 rounded-lg text-[#8E9299] hover:text-amber-warm transition-colors cursor-pointer"
               >
                 <Star
                   className={`w-4 h-4 ${
@@ -434,7 +465,7 @@ export const FreeMindCanvas = ({
                 type="button"
                 onClick={() => setIsDeleteModalOpen(true)}
                 title="Delete reflection"
-                className="p-1.5 rounded-lg text-[#8E9299] hover:text-terracotta-soft transition-colors"
+                className="p-1.5 rounded-lg text-[#8E9299] hover:text-terracotta-soft transition-colors cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -444,7 +475,7 @@ export const FreeMindCanvas = ({
             <button
               onClick={() => setIsZenMode(!isZenMode)}
               title={isZenMode ? 'Exit Zen Mode' : 'Enter Zen Mode'}
-              className={`p-1.5 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                 isZenMode
                   ? 'bg-sage-400/20 text-sage-300 light:text-sage-700'
                   : 'text-[#8E9299] hover:text-[#E6E4DD] light:text-[#6C707E] light:hover:text-[#2B2D42]'
@@ -459,7 +490,7 @@ export const FreeMindCanvas = ({
       </motion.div>
 
       {/* Main Free-Mind Writing Column */}
-      <main className="flex-1 w-full max-w-2xl mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-8">
         {/* Dimming Metadata Controls (Category, Sub-Topic, Date, Complexity) */}
         <motion.div
           onMouseEnter={() => setIsHeaderHovered(true)}
@@ -506,7 +537,7 @@ export const FreeMindCanvas = ({
                         }}
                         onDoubleClick={(e) => handleRemoveCategory(cat, e)}
                         title="Click to select • Double-click to remove from domain"
-                        className={`group relative px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                        className={`group relative px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-sage-400/20 text-sage-300 light:text-sage-700 border border-sage-400/30 font-semibold'
                             : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
@@ -524,7 +555,7 @@ export const FreeMindCanvas = ({
                     type="button"
                     onClick={() => setShowCategoryInput(true)}
                     title="Add custom category to this domain"
-                    className="px-2 py-0.5 rounded-md text-[11px] text-sage-400 light:text-sage-600 hover:bg-sage-400/10 transition-colors flex items-center gap-0.5"
+                    className="px-2 py-0.5 rounded-md text-[11px] text-sage-400 light:text-sage-600 hover:bg-sage-400/10 transition-colors flex items-center gap-0.5 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
                     <span>Category</span>
@@ -541,14 +572,14 @@ export const FreeMindCanvas = ({
                     />
                     <button
                       type="submit"
-                      className="px-1.5 py-0.5 text-[11px] rounded bg-sage-500 text-white hover:bg-sage-600"
+                      className="px-1.5 py-0.5 text-[11px] rounded bg-sage-500 text-white hover:bg-sage-600 cursor-pointer"
                     >
                       Add
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowCategoryInput(false)}
-                      className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD]"
+                      className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -566,7 +597,7 @@ export const FreeMindCanvas = ({
                 <button
                   type="button"
                   onClick={() => setShowSubTopicInput(true)}
-                  className="text-[11px] text-sage-400 light:text-sage-600 hover:underline flex items-center gap-1"
+                  className="text-[11px] text-sage-400 light:text-sage-600 hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3 h-3" /> Custom Tag
                 </button>
@@ -587,7 +618,7 @@ export const FreeMindCanvas = ({
                       onClick={() => setSubTopic(st)}
                       onDoubleClick={(e) => handleRemoveSubTopic(st, e)}
                       title="Click to select • Double-click to remove from domain"
-                      className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                      className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-sage-400 text-[#121316] font-semibold shadow-xs'
                           : 'bg-white/5 light:bg-black/5 text-[#8E9299] light:text-[#6C707E] hover:text-[#E6E4DD] light:hover:text-[#2B2D42]'
@@ -618,14 +649,14 @@ export const FreeMindCanvas = ({
                   />
                   <button
                     type="submit"
-                    className="px-2 py-1 text-xs rounded-lg bg-sage-500 text-white hover:bg-sage-600 transition-colors"
+                    className="px-2 py-1 text-xs rounded-lg bg-sage-500 text-white hover:bg-sage-600 transition-colors cursor-pointer"
                   >
                     Add
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowSubTopicInput(false)}
-                    className="p-1 text-[#8E9299] hover:text-[#E6E4DD]"
+                    className="p-1 text-[#8E9299] hover:text-[#E6E4DD] cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -672,7 +703,7 @@ export const FreeMindCanvas = ({
                       <button
                         type="button"
                         onClick={() => setCurrentTime('start')}
-                        className="text-[10px] text-sage-400 hover:text-sage-300 underline"
+                        className="text-[10px] text-sage-400 hover:text-sage-300 underline cursor-pointer"
                         title="Set to current time"
                       >
                         Now
@@ -696,7 +727,7 @@ export const FreeMindCanvas = ({
                       <button
                         type="button"
                         onClick={() => setCurrentTime('end')}
-                        className="text-[10px] text-sage-400 hover:text-sage-300 underline"
+                        className="text-[10px] text-sage-400 hover:text-sage-300 underline cursor-pointer"
                         title="Set to current time"
                       >
                         Now
@@ -715,7 +746,7 @@ export const FreeMindCanvas = ({
                     type="button"
                     onClick={() => setShowSessionTime(false)}
                     title="Hide Session Time (Double-click label to hide)"
-                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors"
+                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors cursor-pointer"
                   >
                     <EyeOff className="w-3 h-3" />
                   </button>
@@ -725,7 +756,7 @@ export const FreeMindCanvas = ({
                   type="button"
                   onClick={() => setShowSessionTime(true)}
                   title="Show Session Time (Start & End Time)"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
                 >
                   <Clock className="w-3 h-3 text-amber-warm" />
                   <span>+ Session Time</span>
@@ -753,6 +784,7 @@ export const FreeMindCanvas = ({
                     type="text"
                     placeholder="Key insight or core invariant..."
                     value={takeaway}
+                    title={takeaway ? `Aha! Takeaway: ${takeaway}` : undefined}
                     onChange={(e) => {
                       setTakeaway(e.target.value)
                       handleTypingActivity()
@@ -763,7 +795,7 @@ export const FreeMindCanvas = ({
                     type="button"
                     onClick={() => setShowTakeaway(false)}
                     title="Hide Takeaway field"
-                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors"
+                    className="p-0.5 text-[#8E9299] hover:text-[#E6E4DD] rounded transition-colors cursor-pointer"
                   >
                     <EyeOff className="w-3 h-3" />
                   </button>
@@ -773,7 +805,7 @@ export const FreeMindCanvas = ({
                   type="button"
                   onClick={() => setShowTakeaway(true)}
                   title="Show Aha! Takeaway field"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-serif italic text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-serif italic text-[#8E9299] hover:text-sage-400 bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-pointer"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Takeaway</span>
@@ -783,24 +815,35 @@ export const FreeMindCanvas = ({
           </div>
         </motion.div>
 
-        {/* Expressive Editorial Title Input */}
+        {/* Expressive Editorial Title Input - Auto-expanding textarea so long headings wrap and are visible all at once without clipping */}
         <div className="mb-6">
-          <input
-            type="text"
+          <textarea
+            ref={titleTextareaRef}
+            rows={1}
             placeholder="Title of today's breakthrough..."
             value={title}
             onChange={(e) => {
               setTitle(e.target.value)
               handleTypingActivity()
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                // Smoothly focus the TipTap editor canvas below
+                if (editorInstanceRef.current) {
+                  editorInstanceRef.current.commands.focus('start')
+                }
+              }
+            }}
             className="w-full font-serif text-3xl sm:text-4xl font-medium tracking-tight bg-transparent border-none 
-              text-[#E6E4DD] light:text-[#2B2D42] placeholder-[#8E9299]/40 focus:outline-none"
+              text-[#E6E4DD] light:text-[#2B2D42] placeholder-[#8E9299]/40 focus:outline-none resize-none overflow-hidden leading-tight break-words"
           />
         </div>
 
-        {/* Live Rich-Text Canvas (TipTap with live markdown support) */}
+        {/* Live Rich-Text Canvas (TipTap with live markdown support & attached responsive toolbar) */}
         <div className="relative">
           <TipTapEditor
+            editorRef={editorInstanceRef}
             content={content}
             onChange={(newHtml) => {
               setContent(newHtml)
@@ -829,7 +872,7 @@ export const FreeMindCanvas = ({
         <div className="fixed bottom-4 right-4 z-40">
           <button
             onClick={() => setIsZenMode(false)}
-            className="px-3 py-1.5 rounded-xl text-xs font-mono bg-sage-500/80 text-white backdrop-blur-sm shadow-md hover:bg-sage-600 transition-all"
+            className="px-3 py-1.5 rounded-xl text-xs font-mono bg-sage-500/80 text-white backdrop-blur-sm shadow-md hover:bg-sage-600 transition-all cursor-pointer"
           >
             Exit Zen Mode
           </button>

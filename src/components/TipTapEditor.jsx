@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -24,7 +24,11 @@ export const TipTapEditor = ({
   onTypingStateChange,
   placeholder = 'Unpack what you understood today... write with a free mind.',
   readOnly = false,
+  editorRef,
 }) => {
+  // Re-render tick to guarantee toolbar active states update on cursor move and selection change
+  const [, setSelectionTick] = useState(0)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -55,6 +59,13 @@ export const TipTapEditor = ({
       if (onTypingStateChange) {
         onTypingStateChange(true)
       }
+      setSelectionTick((t) => t + 1)
+    },
+    onSelectionUpdate: () => {
+      setSelectionTick((t) => t + 1)
+    },
+    onTransaction: () => {
+      setSelectionTick((t) => t + 1)
     },
   })
 
@@ -65,33 +76,57 @@ export const TipTapEditor = ({
     }
   }, [content, editor])
 
+  // Expose editor instance to parent (for auto-focusing on Enter)
+  useEffect(() => {
+    if (editorRef) {
+      editorRef.current = editor
+    }
+  }, [editor, editorRef])
+
   if (!editor) {
     return null
   }
 
-  const ToolbarBtn = ({ onClick, isActive, icon: Icon, title }) => (
+  // Highly responsive toolbar button:
+  // onMouseDown preventDefault prevents losing the active editor selection when clicked!
+  const ToolbarBtn = ({ onClick, isActive, icon: Icon, title, disabled = false }) => (
     <button
       type="button"
-      onClick={onClick}
+      onMouseDown={(e) => {
+        // Essential: prevent blur on editor so highlighted text remains selected
+        e.preventDefault()
+      }}
+      onClick={(e) => {
+        e.preventDefault()
+        if (disabled) return
+        onClick()
+      }}
+      disabled={disabled}
       title={title}
-      className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-        isActive
-          ? 'bg-sage-400/20 text-sage-400 dark:text-sage-300 light:text-sage-700 font-semibold'
-          : 'text-neutral-400 hover:text-neutral-200 light:text-neutral-500 light:hover:text-neutral-800 hover:bg-white/5 light:hover:bg-black/5'
+      aria-label={title}
+      className={`p-1.5 sm:p-2 rounded-lg text-xs font-medium transition-all select-none cursor-pointer active:scale-90 touch-manipulation flex items-center justify-center ${
+        disabled
+          ? 'opacity-25 cursor-not-allowed text-neutral-500'
+          : isActive
+          ? 'bg-sage-400/25 text-sage-300 light:text-sage-800 border border-sage-400/35 font-bold shadow-xs'
+          : 'text-neutral-400 hover:text-neutral-100 light:text-neutral-600 light:hover:text-neutral-900 hover:bg-white/10 light:hover:bg-black/10'
       }`}
     >
       <Icon className="w-4 h-4" />
     </button>
   )
 
+  const canUndo = editor.can().undo()
+  const canRedo = editor.can().redo()
+
   return (
     <div className="w-full relative group">
-      {/* Editorial Floating / Attached Toolbar */}
+      {/* Editorial Floating / Attached Toolbar - positioned with top-14 to avoid colliding with top nav */}
       {!readOnly && (
         <div
-          className="sticky top-2 z-20 mb-4 inline-flex items-center gap-1 p-1 rounded-xl backdrop-blur-md 
-            bg-[#1A1C20]/80 border border-white/10 shadow-lg transition-opacity duration-300
-            light:bg-[#F3EFE6]/90 light:border-black/10 light:shadow-sm"
+          className="sticky top-14 sm:top-16 z-20 mb-6 inline-flex max-w-full overflow-x-auto no-scrollbar items-center gap-1 p-1 sm:p-1.5 rounded-2xl backdrop-blur-md 
+            bg-[#1A1C20]/90 border border-white/10 shadow-zen transition-all duration-300
+            light:bg-[#F3EFE6]/95 light:border-black/10 light:shadow-sm"
         >
           <ToolbarBtn
             icon={Bold}
@@ -105,7 +140,7 @@ export const TipTapEditor = ({
             onClick={() => editor.chain().focus().toggleItalic().run()}
             isActive={editor.isActive('italic')}
           />
-          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5" />
+          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5 flex-shrink-0" />
           <ToolbarBtn
             icon={Heading1}
             title="Heading 1 (# )"
@@ -124,7 +159,7 @@ export const TipTapEditor = ({
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             isActive={editor.isActive('heading', { level: 3 })}
           />
-          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5" />
+          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5 flex-shrink-0" />
           <ToolbarBtn
             icon={Quote}
             title="Aha! Quote (> )"
@@ -143,7 +178,7 @@ export const TipTapEditor = ({
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             isActive={editor.isActive('codeBlock')}
           />
-          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5" />
+          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5 flex-shrink-0" />
           <ToolbarBtn
             icon={List}
             title="Bullet List (- )"
@@ -162,18 +197,20 @@ export const TipTapEditor = ({
             onClick={() => editor.chain().focus().setHorizontalRule().run()}
             isActive={false}
           />
-          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5" />
+          <div className="w-[1px] h-4 bg-white/10 light:bg-black/10 mx-0.5 flex-shrink-0" />
           <ToolbarBtn
             icon={Undo2}
-            title="Undo"
+            title="Undo (Ctrl+Z)"
             onClick={() => editor.chain().focus().undo().run()}
             isActive={false}
+            disabled={!canUndo}
           />
           <ToolbarBtn
             icon={Redo2}
-            title="Redo"
+            title="Redo (Ctrl+Y / Ctrl+Shift+Z)"
             onClick={() => editor.chain().focus().redo().run()}
             isActive={false}
+            disabled={!canRedo}
           />
         </div>
       )}
